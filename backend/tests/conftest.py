@@ -12,6 +12,7 @@ from collections.abc import AsyncIterator, Awaitable, Callable
 from pathlib import Path
 
 import pytest
+from argon2 import PasswordHasher
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
@@ -22,12 +23,18 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.pool import NullPool
 
+import app.core.security as security
 from app.core.config import Settings
 from app.domain.enums import Role
 from app.main import create_app
 from tests.helpers import create_user, login
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
+
+# SOLO tests: Argon2id con coste mínimo. Con los parámetros de producción cada alta de usuario
+# cuesta ~50 ms y la suite pasa de 1 a 4 minutos. Los parámetros viajan dentro de cada hash, así
+# que verificar hashes de producción sigue funcionando; el test unitario de formato no cambia.
+security._hasher = PasswordHasher(time_cost=1, memory_cost=8, parallelism=1)
 
 # Base separada para no tocar datos de desarrollo.
 TEST_DATABASE_URL = os.environ.get(
@@ -73,7 +80,11 @@ async def engine(migrated_database: None) -> AsyncIterator[AsyncEngine]:
         # El trigger bloquea TRUNCATE en audit_logs; se desactiva solo para la limpieza.
         await conn.execute(text("ALTER TABLE audit_logs DISABLE TRIGGER USER"))
         await conn.execute(
-            text("TRUNCATE users, refresh_tokens, audit_logs RESTART IDENTITY CASCADE")
+            # `rooms` y `appointment_types` no tienen FK hacia `users`: el CASCADE no las alcanza.
+            text(
+                "TRUNCATE users, refresh_tokens, audit_logs, rooms, appointment_types "
+                "RESTART IDENTITY CASCADE"
+            )
         )
         # La secuencia de HC no pertenece a una columna: se reinicia a mano para que los
         # tests vean números correlativos desde 1.

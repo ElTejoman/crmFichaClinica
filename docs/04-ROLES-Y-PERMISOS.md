@@ -52,3 +52,11 @@ Pacientes (datos administrativos) y CRM ya están aplicados en `domain/policies/
 - `DOCTOR`: lee pacientes **de su cartera** (relación terapéutica) y leads **asignados**; no gestiona.
 - `PATIENT`: sin permisos de personal (el portal llega en la Fase 6).
 - Un usuario `OWNER`+`DOCTOR` ve toda la cartera (la visión completa prevalece).
+
+## 6. Estado de implementación (Fase 3: agenda)
+Nuevos permisos en `domain/policies/permissions.py`:
+- `agenda:read` — SUPERUSER, OWNER, RECEPTION, DOCTOR (**el doctor solo recibe SUS citas**, aunque filtre por otro doctor; ver la cita de otro → 403 auditado).
+- `agenda:manage` — OWNER, RECEPTION: agendar, series, confirmar, check-in, cancelar, ausencia, reprogramar y consultar disponibilidad.
+- `agenda:attend` — DOCTOR: iniciar y completar **sus** citas (si no es el doctor de la cita → 403 auditado; recepción nunca atiende).
+- `schedule:manage` — OWNER, RECEPTION: horarios, excepciones, salas y tipos de cita (el SUPERUSER solo lee).
+Un usuario OWNER+DOCTOR ve todo el calendario y puede atender solo las citas donde él es el doctor.

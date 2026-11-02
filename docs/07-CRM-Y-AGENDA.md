@@ -42,3 +42,13 @@
 - Teléfonos normalizados a `+51…` para detectar duplicados y usar WhatsApp.
 - **Duplicados probables**: mismo nombre aproximado (sin tildes) **y** misma fecha de nacimiento, o mismo teléfono. Homónimos con otra fecha de nacimiento no se marcan. Se muestra el documento enmascarado.
 - **Cartera del doctor**: un doctor solo ve pacientes con relación terapéutica activa; sin ella, 403 auditado. Dueño, recepción y superusuario ven todos.
+
+## 5. Implementado en Fase 3 (agenda) — comportamiento real
+- **Estados**: `SCHEDULED → CONFIRMED → CHECKED_IN → IN_PROGRESS → COMPLETED`, más `CANCELLED` y `NO_SHOW` (liberan el hueco). Recepción puede hacer check-in sin confirmar. Una atención iniciada ya no se cancela; si el paciente ya llegó no es "ausencia".
+- **Reglas al agendar**: paciente activo; doctor activo que ofrezca la especialidad; tipo y sala coherentes con la especialidad; hora dentro de **un** bloque de trabajo; día sin excepción; sin solapamiento de doctor, sala ni paciente; no en el pasado (tolerancia de 15 min para pacientes que llegan sin cita).
+- **Check-in** solo el día de la cita (hora de Lima); **ausencia** solo después de la hora de inicio; **cancelar** exige motivo.
+- **Reprogramar** (programadas/confirmadas): valida lo mismo que agendar, ignora su propio horario anterior y deja la cita en `SCHEDULED` (hay que reconfirmar). Puede cambiar doctor (nueva relación terapéutica) o quitar la sala.
+- **Series**: N sesiones (2-20) a la **misma hora local** cada N días; todo o nada, con el detalle de cada sesión problemática.
+- **Disponibilidad**: huecos libres por doctor o especialidad (máx. 14 días), alineados al intervalo del bloque, descontando citas, excepciones y el pasado; todo hueco ofrecido es agendable (probado).
+- **Relación terapéutica automática** al agendar.
+- **Pendiente**: recordatorios automáticos, "tiempo medio hasta la primera cita" en las estadísticas del CRM, y completar la cita desde la firma del encuentro (Fase 4).

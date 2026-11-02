@@ -25,6 +25,7 @@ async def create_user(
     password: str = PASSWORD,
     full_name: str = "Usuario de Prueba",
     is_active: bool = True,
+    specialties: set[Specialty] | None = None,
 ) -> User:
     role_set = set(roles)
     async with session_factory() as session:
@@ -42,7 +43,7 @@ async def create_user(
                 license_number="CMP-000001",
                 professional_body=ProfessionalBody.CMP.value,
                 rne=None,
-                specialties={Specialty.ACUPUNCTURE},
+                specialties=specialties or {Specialty.ACUPUNCTURE},
             )
         user.is_active = is_active
         await session.commit()

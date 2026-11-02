@@ -93,3 +93,20 @@ row_hash = SHA256( prev_hash || ts || actor || action || resource || patient || 
 - El consentimiento de datos se registra con la fecha, pero aún no **quién** lo otorgó (en menores debería ser el apoderado) ni la versión del texto: llegará con la tabla `consents` (Fase 4).
 - La relación terapéutica se asigna **a mano**; la automática al agendar llega en Fase 3.
 - Normalización telefónica y formato de CE: **[VERIFICAR]** contra el plan de numeración y la norma migratoria.
+
+## 10. Implementado en Fase 3 (estado real)
+| Control | Implementación | Probado |
+|---|---|---|
+| Integridad de la agenda | 3 restricciones de exclusión en BD (doctor, sala, paciente) + comprobación previa con mensajes claros; 6 reservas simultáneas del mismo hueco → exactamente 1 gana | ✅ + inserción directa saltándose la API |
+| Mínimo privilegio | El doctor solo ve y atiende sus citas; denegaciones auditadas | ✅ + mutación |
+| Auditoría sin datos personales | Citas auditadas con `patient_id` y **solo códigos de estado** ("estado=CONFIRMED"); test que busca nombres, notas y motivos en toda la tabla | ✅ |
+| Datos mínimos al conflicto | Un 409 de solapamiento devuelve solo horarios, **no** quién ocupa el hueco | ✅ |
+| Sin datos clínicos en citas | `admin_notes` es solo logística (la UI avisa); no hay campos clínicos | — (revisión) |
+| Series todo-o-nada | Si una sesión falla no se guarda ninguna; se listan todas las problemáticas | ✅ + mutación |
+| Horario en hora local | Reglas en `America/Lima`; fechas sin zona horaria se rechazan (422) | ✅ |
+
+**Limitaciones conocidas (Fase 3)**
+- Las excepciones (vacaciones/feriados) **no cancelan** las citas ya programadas: devuelven cuántas quedan afectadas y recepción debe reprogramarlas.
+- "Completar" una cita es manual por ahora; en la Fase 4 ocurrirá al **firmar** el encuentro clínico.
+- El listado del calendario no se audita fila por fila (solo la lectura individual), igual que pacientes.
+- No hay recordatorios automáticos (WhatsApp/email): solo una lista para contactar a mano.

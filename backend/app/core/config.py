@@ -10,8 +10,9 @@ from typing import Literal
 from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# Zona horaria de presentación de la clínica. La BD siempre guarda UTC (ADR-008).
-CLINIC_TIMEZONE = "America/Lima"
+from app.domain.clinic import CLINIC_TIMEZONE
+
+__all__ = ["CLINIC_TIMEZONE", "Settings", "get_settings"]
 
 
 class Settings(BaseSettings):

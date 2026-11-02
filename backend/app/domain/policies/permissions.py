@@ -19,6 +19,10 @@ class Permission(StrEnum):
     LEADS_READ = "leads:read"
     LEADS_MANAGE = "leads:manage"
     LEADS_REPORTS = "leads:reports"
+    AGENDA_READ = "agenda:read"  # ver citas (el doctor, solo las suyas) y catálogos de agenda
+    AGENDA_MANAGE = "agenda:manage"  # agendar, confirmar, check-in, cancelar, reprogramar
+    AGENDA_ATTEND = "agenda:attend"  # iniciar y completar la atención de SUS citas
+    SCHEDULE_MANAGE = "schedule:manage"  # horarios, excepciones, salas y tipos de cita
 
 
 _ADMIN_PERMISSIONS = frozenset(
@@ -30,7 +34,8 @@ _ADMIN_PERMISSIONS = frozenset(
 # Pacientes y CRM aquí son datos *administrativos*: el contenido clínico tendrá permisos
 # propios en la Fase 4 y recepción nunca los recibirá.
 ROLE_PERMISSIONS: dict[Role, frozenset[Permission]] = {
-    Role.SUPERUSER: _ADMIN_PERMISSIONS | {Permission.PATIENTS_READ, Permission.LEADS_READ},
+    Role.SUPERUSER: _ADMIN_PERMISSIONS
+    | {Permission.PATIENTS_READ, Permission.LEADS_READ, Permission.AGENDA_READ},
     Role.OWNER: _ADMIN_PERMISSIONS
     | {
         Permission.PATIENTS_READ,
@@ -38,14 +43,27 @@ ROLE_PERMISSIONS: dict[Role, frozenset[Permission]] = {
         Permission.LEADS_READ,
         Permission.LEADS_MANAGE,
         Permission.LEADS_REPORTS,
+        Permission.AGENDA_READ,
+        Permission.AGENDA_MANAGE,
+        Permission.SCHEDULE_MANAGE,
     },
-    Role.DOCTOR: frozenset({Permission.PATIENTS_READ, Permission.LEADS_READ}),
+    Role.DOCTOR: frozenset(
+        {
+            Permission.PATIENTS_READ,
+            Permission.LEADS_READ,
+            Permission.AGENDA_READ,
+            Permission.AGENDA_ATTEND,
+        }
+    ),
     Role.RECEPTION: frozenset(
         {
             Permission.PATIENTS_READ,
             Permission.PATIENTS_MANAGE,
             Permission.LEADS_READ,
             Permission.LEADS_MANAGE,
+            Permission.AGENDA_READ,
+            Permission.AGENDA_MANAGE,
+            Permission.SCHEDULE_MANAGE,
         }
     ),
     Role.PATIENT: frozenset(),

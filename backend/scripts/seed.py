@@ -7,6 +7,8 @@ NUNCA ejecutar en producción: las contraseñas son públicas y solo sirven para
 import asyncio
 import sys
 
+from seed_agenda import seed_agenda  # mismo directorio: scripts/
+
 from app.core.config import get_settings
 from app.core.database import build_engine, build_session_factory
 from app.core.security import hash_password
@@ -93,8 +95,12 @@ async def seed() -> None:
                 )
             created += 1
         await session.commit()
+        agenda_created = await seed_agenda(session)
     await engine.dispose()
-    print(f"Seed listo: {created} usuarios nuevos. Contraseña demo: {DEMO_PASSWORD}")
+    print(
+        f"Seed listo: {created} usuarios y {agenda_created} registros de agenda nuevos. "
+        f"Contraseña demo: {DEMO_PASSWORD}"
+    )
 
 
 if __name__ == "__main__":

@@ -106,3 +106,15 @@ class LeadActivityType(StrEnum):
     EMAIL = "EMAIL"
     NOTE = "NOTE"
     STATUS_CHANGE = "STATUS_CHANGE"
+
+
+class AppointmentStatus(StrEnum):
+    """Ciclo de vida de una cita (docs/07 §2)."""
+
+    SCHEDULED = "SCHEDULED"
+    CONFIRMED = "CONFIRMED"
+    CHECKED_IN = "CHECKED_IN"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    NO_SHOW = "NO_SHOW"
+    CANCELLED = "CANCELLED"

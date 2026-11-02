@@ -17,19 +17,24 @@ from app.core.security import InvalidTokenError, decode_access_token
 from app.domain.enums import AuditAction, AuditOutcome
 from app.domain.policies.permissions import Permission, can
 from app.models.user import User
+from app.repositories.agenda_catalog import AppointmentTypeRepository, RoomRepository
+from app.repositories.appointments import AppointmentRepository
 from app.repositories.audit import AuditRepository
 from app.repositories.care_team import CareTeamRepository
 from app.repositories.health import HealthRepository
 from app.repositories.leads import LeadRepository
 from app.repositories.patients import PatientRepository
 from app.repositories.refresh_tokens import RefreshTokenRepository
+from app.repositories.schedules import ScheduleRepository
 from app.repositories.unit_of_work import UnitOfWork
 from app.repositories.users import UserRepository
+from app.services.appointments import AppointmentService
 from app.services.audit import AuditService, RequestContext
 from app.services.auth import AuthService
 from app.services.health import HealthService
 from app.services.leads import LeadService
 from app.services.patients import PatientService
+from app.services.schedules import ScheduleService
 from app.services.users import UserService
 
 
@@ -127,12 +132,44 @@ def get_lead_service(
     )
 
 
+def get_appointment_service(
+    session: DbSession, audit: Annotated[AuditService, Depends(get_audit_service)]
+) -> AppointmentService:
+    return AppointmentService(
+        appointments=AppointmentRepository(session),
+        schedules=ScheduleRepository(session),
+        rooms=RoomRepository(session),
+        types=AppointmentTypeRepository(session),
+        patients=PatientRepository(session),
+        care_team=CareTeamRepository(session),
+        users=UserRepository(session),
+        audit=audit,
+        uow=UnitOfWork(session),
+    )
+
+
+def get_schedule_service(
+    session: DbSession, audit: Annotated[AuditService, Depends(get_audit_service)]
+) -> ScheduleService:
+    return ScheduleService(
+        schedules=ScheduleRepository(session),
+        rooms=RoomRepository(session),
+        types=AppointmentTypeRepository(session),
+        appointments=AppointmentRepository(session),
+        users=UserRepository(session),
+        audit=audit,
+        uow=UnitOfWork(session),
+    )
+
+
 HealthServiceDep = Annotated[HealthService, Depends(get_health_service)]
 AuditServiceDep = Annotated[AuditService, Depends(get_audit_service)]
 AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
 UserServiceDep = Annotated[UserService, Depends(get_user_service)]
 PatientServiceDep = Annotated[PatientService, Depends(get_patient_service)]
 LeadServiceDep = Annotated[LeadService, Depends(get_lead_service)]
+AppointmentServiceDep = Annotated[AppointmentService, Depends(get_appointment_service)]
+ScheduleServiceDep = Annotated[ScheduleService, Depends(get_schedule_service)]
 
 
 # ------------------------------------------------------ autenticación / permisos
@@ -195,3 +232,7 @@ PatientsManager = Annotated[User, Depends(require_permission(Permission.PATIENTS
 LeadsReader = Annotated[User, Depends(require_permission(Permission.LEADS_READ))]
 LeadsManager = Annotated[User, Depends(require_permission(Permission.LEADS_MANAGE))]
 LeadsReports = Annotated[User, Depends(require_permission(Permission.LEADS_REPORTS))]
+AgendaReader = Annotated[User, Depends(require_permission(Permission.AGENDA_READ))]
+AgendaManager = Annotated[User, Depends(require_permission(Permission.AGENDA_MANAGE))]
+AgendaAttend = Annotated[User, Depends(require_permission(Permission.AGENDA_ATTEND))]
+ScheduleManager = Annotated[User, Depends(require_permission(Permission.SCHEDULE_MANAGE))]

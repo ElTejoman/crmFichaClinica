@@ -154,3 +154,17 @@ erDiagram
 | Auditoría de pacientes | — | Se guarda `patient_id` y **solo nombres de campos** modificados, jamás valores | La auditoría la leen más roles que la ficha; test de regresión sin datos personales |
 
 Tablas nuevas: `patients`, `clinical_histories`, `care_team` (índice único parcial: un doctor activo por paciente), `leads`, `lead_activities`.
+
+
+## 6. Implementado en Fase 3 (agenda): desviaciones del diseño original
+| Tema | Diseño original | Implementado | Motivo |
+|---|---|---|---|
+| No solapamiento | "constraint de exclusión" | **3 restricciones `EXCLUDE USING gist`** sobre `tstzrange(starts_at, ends_at, '[)')`: por doctor, por sala (si hay) y por paciente; solo para citas que ocupan el calendario (todas menos `CANCELLED`/`NO_SHOW`) | La garantía vive en PostgreSQL (`btree_gist`): aguanta carreras entre peticiones y escrituras fuera de la API. Rango semiabierto: citas consecutivas no chocan |
+| Tipos de cita | por especialidad | `appointment_types` (especialidad, nombre, duración); único por (especialidad, nombre) | Duración por defecto configurable |
+| Salas | por especialidad | `rooms.specialties[]`, vacío = cualquier especialidad | Una sala polivalente es común en clínicas pequeñas |
+| Horarios | semanal + excepciones | `doctor_schedules` (varios bloques por día, vigencia desde/hasta, intervalo de huecos) y `schedule_exceptions` (doctor concreto **o toda la clínica** con `doctor_user_id NULL`) | Almuerzo = hueco entre dos bloques; feriados globales sin repetir por doctor |
+| Series | `series_id` | `appointments.series_id` + endpoint de serie **todo-o-nada** que informa de TODAS las sesiones problemáticas | Evita paquetes a medias |
+| Relación terapéutica | manual (Fase 2) | **Automática al agendar** (`care_team`, auditada con motivo "al agendar") | Habilita al doctor a ver a su paciente |
+| Cancelación | estado | `cancel_reason` obligatorio (máx. 200) | Trazabilidad y métricas |
+
+Todas las horas se guardan en UTC y se interpretan en `America/Lima`. Un bloque de trabajo es **hora local**; una cita debe caber **entera dentro de un único bloque** (no puede cruzar el almuerzo ni la medianoche).

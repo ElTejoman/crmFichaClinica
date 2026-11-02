@@ -39,6 +39,11 @@ CRM + ficha clínica para **una clínica en Lima, Perú** con 5 especialidades: 
 - **Pydantic**: `model_copy(update=...)` NO valida ni convierte: pasar enums, no strings (si no, falla más adelante con un 500).
 - **Hora en PostgreSQL**: `now()` es la hora de INICIO de la transacción; filas creadas juntas empatan. Si importa el orden, fijar `utcnow()` en Python.
 - **SQLAlchemy 2.1 async**: `Select[Patient]` (no `Select[tuple[...]]`); arrays: `literal(x) == any_(col)`; columnas con `server_default`/`onupdate` necesitan `eager_defaults` (ya en `TimestampMixin`) o fallan al serializar.
+- **Aislamiento de tests**: `TRUNCATE users … CASCADE` solo vacía tablas con FK hacia `users`. Toda tabla nueva SIN esa FK (p. ej. `rooms`, `appointment_types`) debe añadirse a la lista del fixture `engine` en `tests/conftest.py`, o sus filas se filtran entre tests (síntoma: 409 por nombre duplicado en la fixture).
+- **Tests y hora real**: no depender de la hora a la que corre la suite. Para probar check-in (mismo día) o ausencia (hora pasada) usar `tests/agenda_helpers.insert_appointment` (inserta saltándose las reglas); las citas "normales" se agendan en un lunes futuro (`next_monday()`).
+- **Velocidad de tests**: `tests/conftest.py` usa Argon2id de coste mínimo (la suite pasa de ~4 min a ~2,5). No tocar los parámetros de `core/security.py`.
+- **`ruff --fix` borra imports "sin usar"** aunque aún no los hayas usado (me pasó con `Any`): añade el import junto con su primer uso.
+- **Aserciones vacías**: nunca `assert (...) or True` ni `... and False`; un test que no puede fallar es peor que no tenerlo. Verificar los controles críticos con una mutación.
 - **Búsqueda en español**: siempre sin tildes (`f_unaccent`) y tolerante a erratas (`<%` word_similarity); escapar `% _ \` del usuario en LIKE.
 
 ## Honestidad normativa
