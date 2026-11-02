@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+
+/* Tokens de diseño: estilo clínico neutro (verde-azulado). Cambiar aquí cambia toda la app. */
+@theme {
+  --color-brand-50: #effaf8;
+  --color-brand-100: #d3f3ee;
+  --color-brand-500: #14a395;
+  --color-brand-600: #0f8479;
+  --color-brand-700: #0f6a62;
+  --color-danger-500: #dc2626;
+  --color-warning-500: #d97706;
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 antialiased;
+}

@@ -1,0 +1,21 @@
+# Sobrescribe el compose base para producción: imágenes `prod`, sin puertos de BD/API expuestos.
+# Requiere un .env real (ver .env.example) con secretos propios.
+services:
+  db:
+    ports: !reset []
+  api:
+    build:
+      target: prod
+    environment:
+      ENVIRONMENT: production
+    ports: !reset []
+    volumes: !reset []
+    restart: unless-stopped
+  web:
+    build:
+      target: prod
+    environment: !reset {}
+    ports:
+      - "80:80"
+    volumes: !reset []
+    restart: unless-stopped

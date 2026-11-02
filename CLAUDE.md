@@ -11,7 +11,9 @@ CRM + ficha clínica para **una clínica en Lima, Perú** con 5 especialidades: 
 - Roles: `SUPERUSER, OWNER, DOCTOR, RECEPTION, PATIENT`; usuario con **múltiples roles** (dueño = OWNER+DOCTOR). **Lead** = entidad CRM, no usuario.
 - Una sola sede. Zona horaria `America/Lima`, BD en UTC.
 - Stack: React+Vite+TS strict / FastAPI + SQLAlchemy 2 async + Alembic + PostgreSQL 16 / Docker Compose.
-- Trabajo en la nube (no hay Docker Desktop del usuario). El usuario valida localmente con `docker compose up`.
+- Trabajo en la nube: **no hay daemon Docker**; se prueba con Postgres 16 nativo + uvicorn + vite. Dockerfiles/compose están validados solo con `docker compose config` (sintaxis); el usuario valida con `docker compose up --build`.
+- TypeScript fijado a **5.9.x** (openapi-typescript 7 exige TS 5; TS 7 del scaffold rompía el árbol de dependencias). `strict` y `noUncheckedIndexedAccess` activos.
+- `npm audit`: 3 avisos moderados solo en `openapi-typescript` (herramienta de desarrollo, no se despliega; 0 en producción). No forzar downgrade.
 - Rama de desarrollo: `claude/intelligent-bardeen-6xu34r`. **No crear PR** salvo que lo pida.
 
 ## Reglas de código (clean code)
@@ -29,12 +31,22 @@ CRM + ficha clínica para **una clínica en Lima, Perú** con 5 especialidades: 
 ## Honestidad normativa
 Lo marcado **[VERIFICAR]** en `docs/01-INVESTIGACION-FICHA-CLINICA.md` NO está confirmado (NTS 139, retención 20 años, firma digital, NTS odontograma, bandera roja de quiropraxia). No presentarlo como hecho. Los textos de consentimiento son **ejemplos no legales**.
 
-## Comandos (se completarán en Fase 0)
+## Comandos
 ```bash
-docker compose up --build            # levantar todo (local del usuario)
-cd backend && pytest                 # tests backend
-cd backend && ruff check . && mypy . # calidad backend
-cd frontend && npm run test && npm run lint && npm run typecheck
+# Local del usuario (Docker Desktop)
+docker compose up --build            # web :5173 · api :8000/docs · db :5432
+
+# Backend (en la nube se usa Postgres nativo: `pg_ctlcluster 16 main start`)
+cd backend && source .venv/bin/activate
+pytest                               # tests (necesita Postgres en localhost, BD `clinic_test`)
+ruff check . && ruff format . && mypy
+alembic upgrade head                 # migraciones
+python scripts/export_openapi.py ../frontend/openapi.json   # contrato → front
+
+# Frontend
+cd frontend
+npm run gen:api                      # tipos desde openapi.json
+npm run lint && npm run typecheck && npm test && npm run build
 ```
 
 ## Mapa de documentos

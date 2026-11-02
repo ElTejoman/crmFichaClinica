@@ -1,0 +1,93 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CRM Clínica API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "salud"
+        ],
+        "summary": "Liveness",
+        "description": "Liveness: responde sin tocar dependencias (si falla, reiniciar el contenedor).",
+        "operationId": "liveness_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LivenessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ready": {
+      "get": {
+        "tags": [
+          "salud"
+        ],
+        "summary": "Readiness",
+        "description": "Readiness: 503 si la BD no responde, para que no se enrute tráfico.",
+        "operationId": "readiness_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LivenessResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok",
+            "title": "Status",
+            "default": "ok"
+          }
+        },
+        "type": "object",
+        "title": "LivenessResponse",
+        "description": "El proceso está vivo (no consulta dependencias)."
+      },
+      "ReadinessResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "degraded"
+            ],
+            "title": "Status"
+          },
+          "database": {
+            "type": "boolean",
+            "title": "Database"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "database"
+        ],
+        "title": "ReadinessResponse",
+        "description": "El servicio puede atender tráfico (BD disponible)."
+      }
+    }
+  }
+}

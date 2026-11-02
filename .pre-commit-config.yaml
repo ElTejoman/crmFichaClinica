@@ -1,0 +1,22 @@
+# Instalar:  pip install pre-commit && pre-commit install
+repos:
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff (backend)
+        entry: bash -c 'cd backend && .venv/bin/ruff check . --fix && .venv/bin/ruff format .'
+        language: system
+        pass_filenames: false
+        files: ^backend/
+      - id: mypy
+        name: mypy (backend)
+        entry: bash -c 'cd backend && .venv/bin/mypy'
+        language: system
+        pass_filenames: false
+        files: ^backend/
+      - id: frontend-checks
+        name: lint + typecheck (frontend)
+        entry: bash -c 'cd frontend && npm run lint && npm run typecheck'
+        language: system
+        pass_filenames: false
+        files: ^frontend/

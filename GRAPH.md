@@ -8,13 +8,13 @@ crmFichaClinica/
 ├─ CLAUDE.md ✅  LOGS.md ✅  AGENTS.md ✅  GRAPH.md ✅  README.md ✅
 ├─ docs/ ✅  (00 plan · 01 investigación · 02 arquitectura · 03 datos · 04 roles · 05 fichas · 06 seguridad · 07 crm/agenda)
 ├─ .claude/skills/ ✅  (backend-layer-feature · frontend-feature · clinical-specialty-module)
-├─ docker-compose.yml ⬜  .env.example ⬜  .gitignore ⬜  .pre-commit-config.yaml ⬜
-├─ .github/workflows/ci.yml ⬜
-├─ backend/ ⬜
+├─ docker-compose.yml ✅  docker-compose.prod.yml ✅  .env.example ✅  .gitignore ✅  .pre-commit-config.yaml ✅
+├─ .github/workflows/ci.yml ✅
+├─ backend/ ✅ (Fase 0: core, health, tests de arquitectura; resto ⬜)
 │  ├─ app/{main.py, core/, domain/{policies/, specialties/}, models/, repositories/, services/, schemas/, api/{deps.py, v1/}}
 │  ├─ alembic/  tests/{unit,integration,architecture}  scripts/{seed.py, verify_audit_chain.py}
-│  └─ pyproject.toml  Dockerfile
-└─ frontend/ ⬜
+│  └─ pyproject.toml ✅  Dockerfile ✅  alembic/versions/0001_baseline_extensions.py ✅
+└─ frontend/ ✅ (Fase 0: shell, proveedores, feature system-status; resto ⬜)
    ├─ src/{app/, shared/, entities/, features/{auth,patients,leads,agenda,dashboard,clinical-record/{core,specialties/*}}, pages/}
    └─ package.json  vite.config.ts  tsconfig.json  Dockerfile
 ```
@@ -75,4 +75,4 @@ sequenceDiagram
 ```
 
 ## 5. Estado
-Ver `LOGS.md`. Hoy: solo documentación y skills (planificación).
+Ver `LOGS.md`. Hoy: Fase 0 completa (esqueleto ejecutable, sin lógica de negocio todavía).
