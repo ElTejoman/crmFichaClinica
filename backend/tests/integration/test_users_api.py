@@ -201,3 +201,17 @@ async def test_password_hash_is_never_exposed(
     headers = await login(client, "dueno@clinica-demo.pe")
     body = (await client.get("/users", headers=headers)).text
     assert "argon2" not in body and PASSWORD not in body and "password_hash" not in body
+
+
+async def test_cannot_grant_doctor_role_to_user_without_professional_profile(
+    client: AsyncClient, session_factory: SessionFactory
+) -> None:
+    """Un doctor sin colegiatura no podría firmar fichas: mismo invariante que al crear."""
+    await create_user(session_factory, "dueno@clinica-demo.pe", [Role.OWNER])
+    target = await create_user(session_factory, "recep@clinica-demo.pe", [Role.RECEPTION])
+    headers = await login(client, "dueno@clinica-demo.pe")
+    response = await client.patch(
+        f"/users/{target.id}", json={"roles": ["DOCTOR"]}, headers=headers
+    )
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "doctor_profile_required"

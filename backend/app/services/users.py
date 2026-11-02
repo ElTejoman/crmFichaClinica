@@ -4,7 +4,7 @@ import uuid
 
 from app.core.errors import AppError, ConflictError, NotFoundError, PermissionDeniedError
 from app.core.security import hash_password
-from app.domain.enums import AuditAction
+from app.domain.enums import AuditAction, Role
 from app.domain.password_policy import validate_password
 from app.domain.policies.permissions import can_assign_roles
 from app.models.user import User
@@ -17,6 +17,11 @@ from app.services.audit import AuditService, RequestContext
 class WeakPasswordError(AppError):
     status_code = 422
     code = "weak_password"
+
+
+class DoctorProfileRequiredError(AppError):
+    status_code = 422
+    code = "doctor_profile_required"
 
 
 class UserService:
@@ -86,6 +91,12 @@ class UserService:
         if data.roles is not None:
             current = set(user.role_names)
             changed = current ^ data.roles  # diferencia simétrica: roles añadidos o retirados
+            # Mismo invariante que en la creación: sin colegiatura un doctor no puede firmar
+            # fichas. La edición del perfil profesional llegará con la gestión de doctores.
+            if Role.DOCTOR in data.roles and user.doctor_profile is None:
+                raise DoctorProfileRequiredError(
+                    "El usuario no tiene perfil profesional; no se le puede asignar el rol DOCTOR"
+                )
             if changed and not can_assign_roles(actor.role_names, changed):
                 raise PermissionDeniedError(
                     "Solo un SUPERUSER puede asignar o retirar roles SUPERUSER u OWNER"

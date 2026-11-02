@@ -15,10 +15,13 @@
     "gen:api": "openapi-typescript openapi.json -o src/shared/types/api.d.ts"
   },
   "dependencies": {
+    "@hookform/resolvers": "^7.0.1",
     "@tanstack/react-query": "^5.105.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "react-router-dom": "^7.18.5"
+    "react-hook-form": "^7.91.0",
+    "react-router-dom": "^7.18.5",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",

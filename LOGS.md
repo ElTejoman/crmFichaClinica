@@ -8,13 +8,47 @@
 |---|---|
 | Planificación e investigación | ✅ (pendiente de aprobación del usuario) |
 | 0 · Cimientos | ✅ |
-| 1 · Identidad y seguridad | ⬜ |
+| 1 · Identidad y seguridad | ✅ |
 | 2 · Pacientes + CRM | ⬜ |
 | 3 · Agenda | ⬜ |
 | 4 · Núcleo clínico | ⬜ |
 | 5a Nutrición · 5b Acupuntura · 5c Quiropraxia · 5d Sueroterapia · 5e Odontología | ⬜ |
 | 6 · Tablero dueño + portal paciente | ⬜ |
 | 7 · Hardening y entrega | ⬜ |
+
+---
+
+## 2026-11-02 · Fase 1 — Identidad y seguridad ✅
+**Hecho (backend)** — ver `docs/06 §8` para el detalle de controles.
+- Usuarios multi-rol + perfil profesional (colegiatura/especialidades); login Argon2id con bloqueo por fuerza bruta; JWT 15 min + refresh rotativo en cookie httpOnly con detección de reutilización; RBAC con auditoría de denegaciones; reglas anti-escalada (solo SUPERUSER toca OWNER/SUPERUSER); auditoría append-only (trigger) con hash encadenado y endpoint de verificación; migración `0002`; `seed.py` (8 usuarios demo).
+- Invariante añadido tras revisión: no se puede asignar el rol DOCTOR a un usuario sin perfil profesional (`doctor_profile_required`).
+**Hecho (frontend, delegado a subagente `frontend-dev` y reverificado por el agente principal)**
+- Sesión en memoria con refresh silencioso y refresh único ante 401 simultáneos, cierre por inactividad (15 min), rutas protegidas por rol, layout responsive, login, gestión de usuarios, visor de auditoría con verificación de integridad. Dependencias nuevas: `react-hook-form`, `zod`, `@hookform/resolvers`.
+
+**Verificación (evidencia, ejecutada por el agente principal)**
+- Backend: ruff ✅ · mypy --strict ✅ (60 archivos) · **pytest 85 passed** (PostgreSQL 16 real, migraciones reales).
+- Mutaciones: quitar revocación de familia / bloqueo de cuenta / chequeo de usuario activo → falla exactamente el test correspondiente (los tests no son vacuosos).
+- Frontend: oxlint ✅ · tsc ✅ · vitest **49 passed** (10 archivos) · build ✅. Sin `any`; token no usa storage.
+- E2E en Chromium (subagente): login/recarga con sesión persistente, alta y desactivación de usuario, 409 por correo duplicado, auditoría + "cadena íntegra", recepción sin acceso (403/404), logout, sin errores de consola de la app.
+
+**Bugs encontrados por las pruebas y corregidos**
+- Crear un usuario sin perfil de doctor devolvía 500 (`MissingGreenlet`: relación no cargada en SQLAlchemy async).
+- Dos tests pasaban en falso (el cookie-jar de httpx ignora dominios sin punto): reescritos con cabecera `Cookie` explícita.
+- El evento LOGOUT se guardaba sin roles del actor.
+
+**NO verificado**
+- Cierre real a los 15 min de inactividad en navegador (solo test unitario con temporizadores simulados).
+- Cadena alterada (`valid=false`) mostrada en la UI; un 403 real del API en la UI (se vio el 403 del guard del front).
+- Docker (sigue sin daemon en la nube). **Push bloqueado (403)**: 5 commits locales sin subir.
+
+**Limitaciones conocidas / deuda**
+- `PATCH /users/{id}` no permite vaciar el teléfono ni editar el perfil profesional (llegará con la gestión de doctores).
+- El refresh silencioso sin cookie deja un 401 en la consola del navegador al abrir la app anónimo (inherente al diseño).
+- `LOGIN_FAILED` guarda el id de la cuenta objetivo (intencional, útil para auditoría).
+- La cadena de hash no detecta borrado de la cola (ver `docs/06 §3`).
+- La BD de desarrollo contiene datos de las pruebas manuales (usuarios demo extra inactivos).
+
+**Siguiente paso**: Fase 2 — Pacientes + CRM (pacientes con HC automática, detección de duplicados, apoderado en menores; leads con embudo y conversión).
 
 ---
 

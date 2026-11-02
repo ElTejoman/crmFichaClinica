@@ -167,9 +167,11 @@ class AuthService:
         if stored is None:
             return
         await self._refresh_tokens.revoke_family(stored.family_id, utcnow())
+        user = await self._users.get_by_id(stored.user_id)
         await self._audit.record(
             AuditAction.LOGOUT,
             actor_user_id=stored.user_id,
+            actor_roles=user.role_names if user else (),
             resource_type="user",
             resource_id=str(stored.user_id),
             context=context,

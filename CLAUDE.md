@@ -28,6 +28,13 @@ CRM + ficha clínica para **una clínica en Lima, Perú** con 5 especialidades: 
 9. Cada feature: tests (unit + integración), docs si cambia el modelo, entrada en `LOGS.md`, actualizar `GRAPH.md` si cambia la estructura.
 10. Commits: Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`).
 
+## Lecciones de tests (no repetir)
+- Los tests de integración deben fallar si se rompe el comportamiento: verificar con una **mutación** manual los controles críticos (seguridad, auditoría).
+- httpx ignora cookies de dominios sin punto (`test`): enviar `Cookie` explícito, no depender del cookie-jar.
+- SQLAlchemy async: toda relación que se serialice debe cargarse (`lazy="selectin"`) o inicializarse; nunca depender de carga perezosa.
+- Un servicio que audita un fallo debe `commit` **antes** de lanzar el error.
+- No usar `pkill -f <patrón>` si el patrón aparece en la propia línea de comandos del shell.
+
 ## Honestidad normativa
 Lo marcado **[VERIFICAR]** en `docs/01-INVESTIGACION-FICHA-CLINICA.md` NO está confirmado (NTS 139, retención 20 años, firma digital, NTS odontograma, bandera roja de quiropraxia). No presentarlo como hecho. Los textos de consentimiento son **ejemplos no legales**.
 
@@ -36,12 +43,13 @@ Lo marcado **[VERIFICAR]** en `docs/01-INVESTIGACION-FICHA-CLINICA.md` NO está 
 # Local del usuario (Docker Desktop)
 docker compose up --build            # web :5173 · api :8000/docs · db :5432
 
-# Backend (en la nube se usa Postgres nativo: `pg_ctlcluster 16 main start`)
+# Backend (en la nube se usa Postgres nativo; tras reiniciar el contenedor: `pg_ctlcluster 16 main start`)
 cd backend && source .venv/bin/activate
 pytest                               # tests (necesita Postgres en localhost, BD `clinic_test`)
 ruff check . && ruff format . && mypy
 alembic upgrade head                 # migraciones
 python scripts/export_openapi.py ../frontend/openapi.json   # contrato → front
+python scripts/seed.py               # 8 usuarios demo (clave Demo-Clinica-2026!) — solo dev
 
 # Frontend
 cd frontend

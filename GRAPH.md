@@ -14,7 +14,7 @@ crmFichaClinica/
 │  ├─ app/{main.py, core/, domain/{policies/, specialties/}, models/, repositories/, services/, schemas/, api/{deps.py, v1/}}
 │  ├─ alembic/  tests/{unit,integration,architecture}  scripts/{seed.py, verify_audit_chain.py}
 │  └─ pyproject.toml ✅  Dockerfile ✅  alembic/versions/{0001 extensiones, 0002 identidad+auditoría} ✅
-└─ frontend/ ✅ (Fase 0: shell, proveedores, feature system-status; resto ⬜)
+└─ frontend/ ✅ (Fase 0-1: shell, auth, users, audit, system-status; resto ⬜)
    ├─ src/{app/, shared/, entities/, features/{auth,patients,leads,agenda,dashboard,clinical-record/{core,specialties/*}}, pages/}
    └─ package.json  vite.config.ts  tsconfig.json  Dockerfile
 ```
@@ -86,5 +86,18 @@ sequenceDiagram
 | `core` | `security` (Argon2id, JWT, refresh), `clock`, `config` (cookies, bloqueo) |
 | `scripts` | `seed.py` (8 usuarios demo), `export_openapi.py` |
 
-## 6. Estado
-Ver `LOGS.md`. Hoy: Fase 0 completa; Fase 1 backend completo (ver LOGS).
+## 6. Fase 1 — componentes implementados (frontend)
+| Zona | Contenido |
+|---|---|
+| `app/` | `AppLayout`, `navigation`, `guards/{RequireAuth,RoleGuard}`, `router`, `providers` |
+| `shared/lib` | `http` (refresh único + reintento), `accessToken` (solo memoria), `apiError`, `labels`, `dates` (Lima), `passwordPolicy` |
+| `shared/ui` | Alert, Badge, Button, CheckboxGroup, Field, Input/Select, Pagination, Spinner, Table |
+| `entities/user` | `permissions` (`can`, `canAssignRole`, `canManageUser`) |
+| `features/auth` | `AuthProvider`, `useAuth`, `LoginForm`, `useIdleLogout` |
+| `features/users` | `UsersManager`, `UsersTable`, `UserCreateForm`, `UserEditForm`, `RoleCheckboxes` |
+| `features/audit` | `AuditPanel`, `AuditTable`, `IntegrityCheck` |
+| `pages/` | Home, Login, Users, Audit, Forbidden, NotFound |
+Rutas: `/login` (pública) · `/` · `/usuarios` y `/auditoria` (OWNER/SUPERUSER).
+
+## 7. Estado
+Ver `LOGS.md`. Hoy: Fases 0 y 1 completas (backend + frontend).

@@ -168,3 +168,16 @@ async def test_deactivated_user_loses_access_immediately(
             text("UPDATE users SET is_active = false WHERE id = :id"), {"id": user.id}
         )
     assert (await client.get("/auth/me", headers=headers)).status_code == 401
+
+
+async def test_logout_audit_event_records_actor_roles(
+    client: AsyncClient, session_factory: SessionFactory, engine: AsyncEngine
+) -> None:
+    await create_user(session_factory, EMAIL, [Role.OWNER, Role.DOCTOR])
+    await login(client, EMAIL)
+    await client.post("/auth/logout")
+    async with engine.connect() as conn:
+        roles = (
+            await conn.execute(text("SELECT actor_roles FROM audit_logs WHERE action='LOGOUT'"))
+        ).scalar_one()
+    assert roles == "DOCTOR,OWNER"
