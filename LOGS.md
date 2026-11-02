@@ -31,4 +31,6 @@
 
 **Entorno verificado**: Python 3.13, Node 22, Docker CLI 29.x, pip y npm accesibles. Daemon Docker/PostgreSQL: por verificar en Fase 0.
 
+**Bloqueo**: `git push` devolvió 403 (la app de GitHub de Claude no tiene acceso a `ElTejoman/crmFichaClinica`). El commit existe solo en el contenedor hasta que se corrija el acceso y se haga el push.
+
 **Siguiente paso**: esperar aprobación del plan por el usuario → iniciar Fase 0.
