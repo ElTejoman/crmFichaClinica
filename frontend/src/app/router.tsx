@@ -100,6 +100,71 @@ export const router = createBrowserRouter([
             },
           },
           {
+            path: '/agenda',
+            lazy: async () => {
+              const { AgendaPage } = await import('@/pages/AgendaPage')
+              return {
+                element: (
+                  <RoleGuard permission="agenda:read">
+                    <AgendaPage />
+                  </RoleGuard>
+                ),
+              }
+            },
+          },
+          {
+            path: '/agenda/hoy',
+            lazy: async () => {
+              const { TodayPage } = await import('@/pages/TodayPage')
+              return {
+                element: (
+                  <RoleGuard permission="agenda:manage">
+                    <TodayPage />
+                  </RoleGuard>
+                ),
+              }
+            },
+          },
+          {
+            path: '/agenda/nueva',
+            lazy: async () => {
+              const { NewAppointmentPage } = await import('@/pages/NewAppointmentPage')
+              return {
+                element: (
+                  <RoleGuard permission="agenda:manage">
+                    <NewAppointmentPage />
+                  </RoleGuard>
+                ),
+              }
+            },
+          },
+          {
+            path: '/agenda/configuracion',
+            lazy: async () => {
+              const { AgendaConfigPage } = await import('@/pages/AgendaConfigPage')
+              return {
+                element: (
+                  <RoleGuard permission="schedule:manage">
+                    <AgendaConfigPage />
+                  </RoleGuard>
+                ),
+              }
+            },
+          },
+          {
+            path: '/mi-agenda',
+            lazy: async () => {
+              const { MyAgendaPage } = await import('@/pages/MyAgendaPage')
+              return {
+                element: (
+                  <RoleGuard permission="agenda:attend">
+                    <MyAgendaPage />
+                  </RoleGuard>
+                ),
+              }
+            },
+          },
+          {
             path: '/usuarios',
             lazy: async () => {
               const { UsersPage } = await import('@/pages/UsersPage')

@@ -35,9 +35,9 @@ export function AppLayout() {
               <li key={item.to}>
                 <NavLink
                   to={item.to}
-                  end={item.to === '/'}
+                  end={item.to === '/' || item.end === true}
                   className={({ isActive }) =>
-                    `${NAV_LINK_BASE} block ${isActive ? 'bg-brand-100 text-brand-700' : 'text-slate-700 hover:bg-slate-100'}`
+                    `${NAV_LINK_BASE} block ${item.nested ? 'lg:ml-4' : ''} ${isActive ? 'bg-brand-100 text-brand-700' : 'text-slate-700 hover:bg-slate-100'}`
                   }
                 >
                   {item.label}

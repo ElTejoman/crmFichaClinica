@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 
 import { can } from '@/entities/user'
 import { NAV_ITEMS } from '@/app/navigation'
+import { TodayWidget } from '@/features/agenda'
 import { useAuth } from '@/features/auth'
 import { FollowupsWidget } from '@/features/leads'
 import { ApiStatus } from '@/features/system-status'
@@ -34,6 +35,7 @@ export function HomePage() {
         </ul>
       </section>
 
+      {can(user.roles, 'agenda:read') && <TodayWidget />}
       {can(user.roles, 'leads:read') && <FollowupsWidget />}
 
       {shortcuts.length > 0 && (

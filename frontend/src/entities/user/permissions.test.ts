@@ -55,6 +55,33 @@ describe('can: pacientes y CRM', () => {
   })
 })
 
+describe('can: agenda', () => {
+  it('lectura: personal clínico y administrativo; el paciente no', () => {
+    for (const role of ['SUPERUSER', 'OWNER', 'DOCTOR', 'RECEPTION'] as const) {
+      expect(can([role], 'agenda:read')).toBe(true)
+    }
+    expect(can(['PATIENT'], 'agenda:read')).toBe(false)
+  })
+
+  it('agendar y configurar horarios: solo OWNER y RECEPTION', () => {
+    for (const permission of ['agenda:manage', 'schedule:manage'] as const) {
+      expect(can(['OWNER'], permission)).toBe(true)
+      expect(can(['RECEPTION'], permission)).toBe(true)
+      expect(can(['DOCTOR'], permission)).toBe(false)
+      expect(can(['SUPERUSER'], permission)).toBe(false)
+      expect(can(['PATIENT'], permission)).toBe(false)
+    }
+  })
+
+  it('atender (iniciar/completar): solo el rol DOCTOR; el dueño lo hace por su rol DOCTOR', () => {
+    expect(can(['DOCTOR'], 'agenda:attend')).toBe(true)
+    expect(can(['OWNER', 'DOCTOR'], 'agenda:attend')).toBe(true)
+    for (const role of ['OWNER', 'RECEPTION', 'SUPERUSER', 'PATIENT'] as const) {
+      expect(can([role], 'agenda:attend')).toBe(false)
+    }
+  })
+})
+
 describe('canAssignRole', () => {
   it('solo SUPERUSER asigna SUPERUSER u OWNER', () => {
     expect(canAssignRole(['OWNER'], 'OWNER')).toBe(false)

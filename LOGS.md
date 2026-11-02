@@ -10,11 +10,49 @@
 | 0 · Cimientos | ✅ |
 | 1 · Identidad y seguridad | ✅ |
 | 2 · Pacientes + CRM | ✅ |
-| 3 · Agenda | ⬜ |
+| 3 · Agenda | ✅ |
 | 4 · Núcleo clínico | ⬜ |
 | 5a Nutrición · 5b Acupuntura · 5c Quiropraxia · 5d Sueroterapia · 5e Odontología | ⬜ |
 | 6 · Tablero dueño + portal paciente | ⬜ |
 | 7 · Hardening y entrega | ⬜ |
+
+---
+
+## 2026-11-02 · Fase 3 — Agenda ✅
+**Hecho (backend)** — detalle en `docs/03 §6`, `docs/04 §6`, `docs/06 §10`, `docs/07 §5`.
+- Horarios semanales por doctor (varios bloques/día, vigencia, intervalo), excepciones (doctor o **toda la clínica**), salas y tipos de cita con duración. Migración `0004`.
+- Citas con máquina de estados, series todo-o-nada, reprogramación, check-in solo el día (hora de Lima), ausencia solo tras la hora, cancelación con motivo, disponibilidad por doctor/especialidad (máx. 14 días).
+- **No solapamiento garantizado por PostgreSQL** (3 restricciones `EXCLUDE USING gist`: doctor, sala, paciente) + comprobación previa con mensajes claros. La relación terapéutica doctor↔paciente se crea **automáticamente al agendar**.
+- Doctor: solo ve y atiende SUS citas (denegaciones auditadas). Auditoría sin datos personales (solo `patient_id` y códigos de estado). Seed ampliado (`scripts/seed_agenda.py`: 11 tipos, 5 salas, horarios, 6 pacientes y 7 citas ficticios, idempotente).
+**Hecho (frontend, subagente `frontend-dev`, reverificado por el agente principal)**
+- Calendario semanal y diario con vista de lista accesible alternativa, detalle de cita con acciones por estado y permiso, asistente "Nueva cita" (paciente → especialidad → doctor → tipo → huecos libres → sala → notas → paquete de sesiones), "Hoy" con recordatorios manuales por WhatsApp (sin datos clínicos), "Mi agenda" del doctor con cola, configuración (horarios, excepciones, salas, tipos), "Próximas citas" en la ficha del paciente y widget de inicio. Utilidades de fechas de Lima independientes de la zona del navegador. `Dialog` compartido mejorado (fondo inerte, Escape global). Sin dependencias nuevas.
+
+**Verificación (evidencia, ejecutada por el agente principal)**
+- Backend: ruff ✅ · mypy --strict ✅ (96 archivos) · alembic check ✅ + ciclo de migración · **pytest 396 passed** (PostgreSQL 16 real) en ~2,5 min.
+- Mutaciones backend (9): horario laboral siempre válido, excepciones ignoradas, doctor ve citas ajenas, check-in cualquier día, reprogramar choca con su propio horario, sin relación terapéutica al agendar, serie no atómica, cualquiera atiende, disponibilidad ignora ocupadas → cada una hace fallar el test correspondiente.
+- Frontend: oxlint ✅ · tsc ✅ · prettier ✅ · **vitest 294 passed (58 archivos)** · build ✅. Los tests de fechas/calendario pasan igual con `TZ=UTC`, `America/Los_Angeles` y `Asia/Tokyo` (207/207, verificado por mí). El subagente probó 10 mutaciones propias.
+- E2E en Chromium (subagente, apartados a–m): calendario en hora de Lima (09:00, no 14:00), crear desde un hueco y ver desaparecer los huecos ocupados, 409 legible incluso en una carrera entre dos pantallas, serie de 4 sesiones y serie rechazada listando las sesiones problemáticas, flujo completo del día (confirmar → check-in → cola del doctor → iniciar → completar), cancelar con motivo, reprogramar, excepción con aviso de citas afectadas, config, doctor sin acceso a citas ajenas ni a configuración, tablet 820 px sin scroll horizontal, teclado y foco del diálogo.
+
+**Bugs encontrados por las pruebas y corregidos**
+- Aislamiento de tests: `rooms` y `appointment_types` no tienen FK a `users` y sobrevivían al `TRUNCATE … CASCADE` (409 por nombre duplicado en la fixture) → añadidas a la limpieza.
+- Dos aserciones que no podían fallar (`... or True`, `... and False`) → reemplazadas por comprobaciones reales.
+- Mi mutación de "ignorar ocupadas" tenía un error de sintaxis y no probaba nada → rehecha.
+- `ruff --fix` borró un import aún no usado (`Any`) → lección en CLAUDE.md.
+- (Subagente) Con `Dialog`, Escape dejaba de funcionar si el botón enfocado se deshabilitaba al guardar → listener global.
+
+**NO verificado**
+- `docker compose` (sin daemon). Lectores de pantalla reales y contraste AA medido. Vistas a 360 px. Navegadores distintos de Chromium.
+- **Push a GitHub bloqueado (403)**: 11 commits locales sin subir.
+
+**Pendiente / observaciones**
+- En la semana, las citas solapadas (sin filtrar por doctor) quedan muy angostas y su texto se trunca (el nombre accesible y la lista siguen completos).
+- `AppointmentRead` no trae historial de estados (el detalle solo muestra creación, llegada y motivo de cancelación).
+- Un 409 de solapamiento devuelve un único `details.resource` aunque choquen varios recursos (la UI muestra todos los conflictos).
+- `WorkingBlockCreate` no acepta `is_active` (se desactiva con PATCH).
+- Datos de prueba en la BD de desarrollo no borrables por API: 6 citas "E2E" canceladas, una cita de hoy ya atendida (inmutable), sala "E2E Sala 9" y tipo "E2E Tipo 25".
+- Las excepciones no cancelan citas ya programadas (avisan cuántas quedan afectadas); "completar" es manual hasta la Fase 4; no hay recordatorios automáticos.
+
+**Siguiente paso**: Fase 4 — **núcleo clínico** (historia: resumen, alergias, medicación, antecedentes; encuentros SOAP con vitales y CIE-10; consentimientos; adjuntos; firma que bloquea la edición; adendas; línea de tiempo; completar la cita al firmar). Es la fase de mayor riesgo clínico y legal: validar con un doctor antes de producción.
 
 ---
 

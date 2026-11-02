@@ -13,3 +13,4 @@ export {
   type PatientFormMode,
   type PatientFormValues,
 } from './schemas'
+export { usePatientById, usePatientLookup } from './api/usePatientLookup'

@@ -7,6 +7,7 @@ import {
   toPatientUpdate,
   type PatientFormValues,
 } from '@/entities/patient'
+import { PatientAppointments } from '@/entities/appointment'
 import { readFlash } from '@/shared/lib/flash'
 import { ApiError } from '@/shared/lib/http'
 import { Alert, Badge, Button, Dialog, Spinner } from '@/shared/ui'
@@ -43,7 +44,19 @@ function LoadError({ error }: { error: unknown }) {
 }
 
 /** Ficha administrativa del paciente: datos, edición, archivado y equipo tratante. */
-export function PatientDetail({ patientId, canManage }: { patientId: string; canManage: boolean }) {
+export function PatientDetail({
+  patientId,
+  canManage,
+  canViewAppointments = false,
+  canSchedule = false,
+}: {
+  patientId: string
+  canManage: boolean
+  /** AGENDA_READ: muestra «Próximas citas». */
+  canViewAppointments?: boolean
+  /** AGENDA_MANAGE: muestra «Agendar cita». */
+  canSchedule?: boolean
+}) {
   const patient = usePatient(patientId)
   const update = useUpdatePatient(patientId)
   const location = useLocation()
@@ -113,29 +126,41 @@ export function PatientDetail({ patientId, canManage }: { patientId: string; can
             </span>
           </p>
         </div>
-        {canManage && !editing && (
-          <div className="flex gap-2">
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setMessage(null)
-                setEditing(true)
-              }}
-            >
-              Editar
-            </Button>
-            {data.is_active ? (
-              <Button variant="secondary" onClick={() => setConfirmArchive(true)}>
-                Archivar
-              </Button>
-            ) : (
-              <Button
-                variant="secondary"
-                loading={update.isPending}
-                onClick={() => setActive(true)}
+        {(canManage || canSchedule) && !editing && (
+          <div className="flex flex-wrap gap-2">
+            {canSchedule && (
+              <Link
+                to={`/agenda/nueva?patient=${patientId}`}
+                className="inline-flex min-h-10 items-center rounded-md bg-brand-700 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
               >
-                Reactivar
-              </Button>
+                Agendar cita
+              </Link>
+            )}
+            {canManage && (
+              <>
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setMessage(null)
+                    setEditing(true)
+                  }}
+                >
+                  Editar
+                </Button>
+                {data.is_active ? (
+                  <Button variant="secondary" onClick={() => setConfirmArchive(true)}>
+                    Archivar
+                  </Button>
+                ) : (
+                  <Button
+                    variant="secondary"
+                    loading={update.isPending}
+                    onClick={() => setActive(true)}
+                  >
+                    Reactivar
+                  </Button>
+                )}
+              </>
             )}
           </div>
         )}
@@ -162,6 +187,7 @@ export function PatientDetail({ patientId, canManage }: { patientId: string; can
         <PatientDataView patient={data} />
       )}
 
+      {canViewAppointments && <PatientAppointments patientId={patientId} />}
       {canManage && <CareTeamPanel patientId={patientId} />}
 
       <Dialog

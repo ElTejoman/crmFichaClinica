@@ -1,4 +1,5 @@
 import type {
+  AppointmentStatus,
   DocumentType,
   LeadActivityType,
   LeadSource,
@@ -130,6 +131,62 @@ export const REGISTRABLE_ACTIVITY_TYPES: readonly LeadActivityType[] = [
   'NOTE',
 ]
 
+export const APPOINTMENT_STATUS_LABELS: Record<AppointmentStatus, string> = {
+  SCHEDULED: 'Agendada',
+  CONFIRMED: 'Confirmada',
+  CHECKED_IN: 'En espera (llegó)',
+  IN_PROGRESS: 'En atención',
+  COMPLETED: 'Atendida',
+  NO_SHOW: 'No asistió',
+  CANCELLED: 'Cancelada',
+}
+
+export const ALL_APPOINTMENT_STATUSES: readonly AppointmentStatus[] = [
+  'SCHEDULED',
+  'CONFIRMED',
+  'CHECKED_IN',
+  'IN_PROGRESS',
+  'COMPLETED',
+  'NO_SHOW',
+  'CANCELLED',
+]
+
+/** 0 = lunes … 6 = domingo, igual que `weekday` del API de horarios. */
+export const WEEKDAY_LABELS: readonly string[] = [
+  'Lunes',
+  'Martes',
+  'Miércoles',
+  'Jueves',
+  'Viernes',
+  'Sábado',
+  'Domingo',
+]
+
+export const WEEKDAY_SHORT_LABELS: readonly string[] = [
+  'lun',
+  'mar',
+  'mié',
+  'jue',
+  'vie',
+  'sáb',
+  'dom',
+]
+
+export const MONTH_LABELS: readonly string[] = [
+  'enero',
+  'febrero',
+  'marzo',
+  'abril',
+  'mayo',
+  'junio',
+  'julio',
+  'agosto',
+  'septiembre',
+  'octubre',
+  'noviembre',
+  'diciembre',
+]
+
 /** Nombres de campos del API para mensajes de validación (422 estándar de FastAPI). */
 export const FIELD_LABELS: Record<string, string> = {
   email: 'Correo',
@@ -154,6 +211,25 @@ export const FIELD_LABELS: Record<string, string> = {
   interest_specialties: 'Especialidades de interés',
   lost_reason: 'Motivo de pérdida',
   next_action_at: 'Próxima acción',
+  starts_at: 'Fecha y hora',
+  duration_minutes: 'Duración',
+  appointment_type_id: 'Tipo de cita',
+  room_id: 'Sala',
+  admin_notes: 'Notas administrativas',
+  reason: 'Motivo',
+  count: 'Cantidad de sesiones',
+  interval_days: 'Días entre sesiones',
+  name: 'Nombre',
+  weekday: 'Día de la semana',
+  start_time: 'Hora de inicio',
+  end_time: 'Hora de fin',
+  slot_minutes: 'Minutos por cita',
+  valid_from: 'Vigente desde',
+  valid_to: 'Vigente hasta',
+  start_date: 'Fecha de inicio',
+  end_date: 'Fecha de fin',
+  from_date: 'Desde',
+  to_date: 'Hasta',
 }
 
 /** Etiqueta de un rol; si el servidor añadiera uno nuevo se muestra tal cual en vez de fallar. */

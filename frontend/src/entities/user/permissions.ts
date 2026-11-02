@@ -12,6 +12,10 @@ export type Permission =
   | 'leads:read'
   | 'leads:manage'
   | 'leads:reports'
+  | 'agenda:read'
+  | 'agenda:manage'
+  | 'agenda:attend'
+  | 'schedule:manage'
 
 const PERMISSION_ROLES: Record<Permission, readonly Role[]> = {
   'users:manage': ['SUPERUSER', 'OWNER'],
@@ -22,6 +26,11 @@ const PERMISSION_ROLES: Record<Permission, readonly Role[]> = {
   'leads:read': ['SUPERUSER', 'OWNER', 'DOCTOR', 'RECEPTION'],
   'leads:manage': ['OWNER', 'RECEPTION'],
   'leads:reports': ['OWNER'],
+  // Agenda. Un DOCTOR solo recibe SUS citas (lo filtra el servidor); atender exige ser el doctor de la cita.
+  'agenda:read': ['SUPERUSER', 'OWNER', 'DOCTOR', 'RECEPTION'],
+  'agenda:manage': ['OWNER', 'RECEPTION'],
+  'agenda:attend': ['DOCTOR'],
+  'schedule:manage': ['OWNER', 'RECEPTION'],
 }
 
 /** ¿Alguno de los roles del usuario concede el permiso? (usuario con múltiples roles = unión). */

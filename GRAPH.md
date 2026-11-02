@@ -13,8 +13,8 @@ crmFichaClinica/
 ├─ backend/ ✅ (Fase 0: core, health, tests de arquitectura; resto ⬜)
 │  ├─ app/{main.py, core/, domain/{policies/, specialties/}, models/, repositories/, services/, schemas/, api/{deps.py, v1/}}
 │  ├─ alembic/  tests/{unit,integration,architecture}  scripts/{seed.py, verify_audit_chain.py}
-│  └─ pyproject.toml ✅  Dockerfile ✅  alembic/versions/{0001 extensiones, 0002 identidad+auditoría, 0003 pacientes+CRM} ✅
-└─ frontend/ ✅ (Fases 0-2: shell, auth, users, audit, patients, leads; resto ⬜)
+│  └─ pyproject.toml ✅  Dockerfile ✅  alembic/versions/{0001 extensiones, 0002 identidad+auditoría, 0003 pacientes+CRM, 0004 agenda} ✅
+└─ frontend/ ✅ (Fases 0-3: shell, auth, users, audit, patients, leads, agenda; resto ⬜)
    ├─ src/{app/, shared/, entities/, features/{auth,patients,leads,agenda,dashboard,clinical-record/{core,specialties/*}}, pages/}
    └─ package.json  vite.config.ts  tsconfig.json  Dockerfile
 ```
@@ -112,5 +112,19 @@ Rutas: `/login` (pública) · `/` · `/usuarios` y `/auditoria` (OWNER/SUPERUSER
 | `frontend/shared/ui` | + Dialog, Tabs, Textarea, CheckboxField |
 Rutas nuevas: `/pacientes` · `/pacientes/nuevo` · `/pacientes/:id` · `/leads` · `/leads/:id` · `/leads/:id/convertir`.
 
-## 8. Estado
-Ver `LOGS.md`. Hoy: Fases 0, 1 y 2 completas (backend + frontend).
+## 8. Fase 3 — componentes implementados
+| Zona | Contenido |
+|---|---|
+| `backend/domain` | `agenda_rules` (estados, horario laboral, huecos, solapamiento, hora de Lima), `clinic` (zona horaria), permisos `agenda:*` y `schedule:manage` |
+| `backend/models` | `agenda` (DoctorSchedule, ScheduleException, Room, AppointmentType, Appointment + 3 restricciones de exclusión) |
+| `backend/repositories` | `appointments` (calendario, solapamientos, disponibilidad), `schedules`, `agenda_catalog` (salas y tipos) |
+| `backend/services` | `appointments` (agendar, series, reprogramar, estados, disponibilidad, relación terapéutica), `schedules` (configuración) |
+| `backend/api/v1` | `appointments`, `agenda_config` |
+| `backend/scripts` | `seed_agenda.py` |
+| `frontend/features/agenda` | calendario semanal/diario + lista, detalle de cita, asistente de nueva cita, Hoy, Mi agenda, configuración (horarios, excepciones, salas, tipos) |
+| `frontend/entities` | `appointment` (lista, estado, citas del paciente), `patient/usePatientLookup` |
+| `frontend/shared` | `lib/dates` (utilidades de Lima), `ui/Dialog` mejorado |
+Rutas nuevas: `/agenda` · `/agenda/hoy` · `/agenda/nueva` · `/agenda/configuracion` · `/mi-agenda`.
+
+## 9. Estado
+Ver `LOGS.md`. Hoy: Fases 0, 1, 2 y 3 completas (backend + frontend).

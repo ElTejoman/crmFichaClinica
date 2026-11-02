@@ -3,6 +3,7 @@ import { screen } from '@testing-library/react'
 import { installFetch, jsonResponse } from '@/test/fetchMock'
 import { makeUser, renderWithAuth } from '@/test/renderWithAuth'
 import type { PatientRead } from '@/shared/types/aliases'
+import { makeAppointment } from '@/test/appointments'
 
 import { PatientDetail } from './PatientDetail'
 
@@ -71,5 +72,48 @@ describe('PatientDetail', () => {
     expect(await screen.findByRole('button', { name: 'Editar' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Archivar' })).toBeInTheDocument()
     expect(await screen.findByText('Todavía no hay doctores asignados.')).toBeInTheDocument()
+  })
+
+  it('con permiso de agenda muestra «Próximas citas» (solo abiertas) y «Agendar cita» hacia la nueva cita', async () => {
+    const open = makeAppointment({ id: 'a-open', status: 'CONFIRMED' })
+    const done = makeAppointment({
+      id: 'a-done',
+      status: 'CANCELLED',
+      doctor_name: 'Doctor Cancelado',
+    })
+    installFetch(
+      (c) => (c.url === '/api/patients/p-1' ? jsonResponse(200, patient) : undefined),
+      (c) => (c.url.startsWith('/api/appointments?') ? jsonResponse(200, [open, done]) : undefined),
+      (c) => (c.url === '/api/patients/p-1/care-team' ? jsonResponse(200, []) : undefined),
+      (c) => (c.url === '/api/doctors' ? jsonResponse(200, []) : undefined),
+    )
+    renderWithAuth(
+      <PatientDetail patientId="p-1" canManage canViewAppointments canSchedule />,
+      makeUser(['RECEPTION']),
+    )
+    expect(await screen.findByRole('heading', { name: 'Próximas citas' })).toBeInTheDocument()
+    expect(await screen.findByText(/Confirmada/)).toBeInTheDocument()
+    expect(screen.queryByText(/Doctor Cancelado/)).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Agendar cita' })).toHaveAttribute(
+      'href',
+      '/agenda/nueva?patient=p-1',
+    )
+  })
+
+  it('un doctor ve las citas pero no el botón de agendar; sin permiso no ve nada de agenda', async () => {
+    installFetch(
+      (c) => (c.url === '/api/patients/p-1' ? jsonResponse(200, patient) : undefined),
+      (c) => (c.url.startsWith('/api/appointments?') ? jsonResponse(200, []) : undefined),
+    )
+    const { unmount } = renderWithAuth(
+      <PatientDetail patientId="p-1" canManage={false} canViewAppointments />,
+      makeUser(['DOCTOR']),
+    )
+    expect(await screen.findByText('El paciente no tiene citas próximas.')).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Agendar cita' })).not.toBeInTheDocument()
+    unmount()
+    renderWithAuth(<PatientDetail patientId="p-1" canManage={false} />, makeUser(['DOCTOR']))
+    await screen.findByRole('heading', { name: 'Rosa Quispe' })
+    expect(screen.queryByRole('heading', { name: 'Próximas citas' })).not.toBeInTheDocument()
   })
 })

@@ -1,0 +1,6 @@
+export { AgendaWorkspace } from './components/AgendaWorkspace'
+export { NewAppointmentView } from './components/NewAppointmentView'
+export { TodayView } from './components/TodayView'
+export { MyAgendaView } from './components/MyAgendaView'
+export { TodayWidget } from './components/TodayWidget'
+export { ConfigWorkspace } from './config/ConfigWorkspace'

@@ -16,6 +16,8 @@ export function PatientDetailPage() {
       key={patientId}
       patientId={patientId}
       canManage={can(user?.roles, 'patients:manage')}
+      canViewAppointments={can(user?.roles, 'agenda:read')}
+      canSchedule={can(user?.roles, 'agenda:manage')}
     />
   )
 }

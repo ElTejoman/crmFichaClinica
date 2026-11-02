@@ -47,4 +47,27 @@ describe('Dialog', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Abrir' })).toHaveFocus()
   })
+
+  it('Escape cierra aunque el foco haya caído al <body> (botón deshabilitado al guardar)', async () => {
+    const user = userEvent.setup()
+    render(<Harness />)
+    await user.click(screen.getByRole('button', { name: 'Abrir' }))
+    ;(document.activeElement as HTMLElement).blur()
+    expect(document.body).toHaveFocus()
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('mientras está abierto deja inerte el resto de la app (#root) y lo restaura al cerrar', async () => {
+    const root = document.createElement('div')
+    root.id = 'root'
+    document.body.appendChild(root)
+    const user = userEvent.setup()
+    render(<Harness />, { container: root.appendChild(document.createElement('div')) })
+    await user.click(screen.getByRole('button', { name: 'Abrir' }))
+    expect(root).toHaveAttribute('inert')
+    await user.keyboard('{Escape}')
+    expect(root).not.toHaveAttribute('inert')
+    root.remove()
+  })
 })
