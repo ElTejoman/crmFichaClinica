@@ -9,12 +9,57 @@
 | Planificación e investigación | ✅ (pendiente de aprobación del usuario) |
 | 0 · Cimientos | ✅ |
 | 1 · Identidad y seguridad | ✅ |
-| 2 · Pacientes + CRM | ⬜ |
+| 2 · Pacientes + CRM | ✅ |
 | 3 · Agenda | ⬜ |
 | 4 · Núcleo clínico | ⬜ |
 | 5a Nutrición · 5b Acupuntura · 5c Quiropraxia · 5d Sueroterapia · 5e Odontología | ⬜ |
 | 6 · Tablero dueño + portal paciente | ⬜ |
 | 7 · Hardening y entrega | ⬜ |
+
+---
+
+## 2026-11-02 · Fase 2 — Pacientes + CRM ✅
+**Hecho (backend)** — detalle en `docs/03 §5`, `docs/04 §5`, `docs/06 §9`, `docs/07 §3-4`.
+- Pacientes: documento peruano validado y único, historia clínica única automática con correlativo desde secuencia de BD (`HC-000001`), apoderado obligatorio en menores, consentimiento de datos obligatorio, archivado (sin borrado), normalización de teléfonos, auditoría de lectura/escritura con `patient_id` y **solo nombres de campos** (sin valores).
+- Búsqueda sin tildes (`f_unaccent` + índice GIN trigram) y tolerante a erratas (`word_similarity`); duplicados probables (nombre aprox. + fecha de nacimiento, o teléfono) con documento enmascarado. **Medido: 5–27 ms con 20.000 pacientes, índice usado.**
+- Relación terapéutica (`care_team`): un doctor solo ve sus pacientes; sin relación, 403 auditado.
+- CRM: embudo con reglas en el dominio, actividades, próxima acción, seguimientos de hoy (hora de Lima), detección de duplicados lead/paciente, conversión atómica a paciente, estadísticas solo para OWNER, doctor ve solo leads asignados. El lead trae `assigned_to_name` y `lost_reason`.
+- Migración `0003` (secuencia, función `f_unaccent`, índices) con ciclo upgrade/check/downgrade/upgrade verificado.
+**Hecho (frontend, subagente `frontend-dev`, reverificado por el agente principal)**
+- Pacientes: búsqueda con debounce, alta por secciones (apoderado aparece/obligatorio si es menor, aviso de duplicados, consentimiento), ficha, edición parcial, archivado y equipo tratante. CRM: tablero Kanban (arrastrar + "Mover a…" accesible por teclado), detalle, actividades, conversión con formulario pre-rellenado, Perdidos/Convertidos, seguimientos de hoy en inicio y estadísticas del dueño. Componentes nuevos: Dialog (foco atrapado), Tabs (WAI-ARIA), Textarea. Sin dependencias nuevas.
+
+**Verificación (evidencia, ejecutada por el agente principal)**
+- Backend: ruff ✅ · mypy --strict ✅ (80 archivos) · alembic check ✅ · **pytest 221 passed** (PostgreSQL 16 real).
+- Mutaciones backend (6): filtro de cartera del doctor, chequeo de relación terapéutica, apoderado en menores, commit prematuro en conversión, PII en auditoría, búsqueda sin tildes → cada una hace fallar el test correspondiente. Se añadió un test de **fallo tardío** porque los de atomicidad existentes fallaban antes de cualquier commit y no detectaban un commit prematuro.
+- Frontend: oxlint ✅ · tsc ✅ · prettier ✅ · **vitest 174 passed (37 archivos)** · build ✅. El subagente probó 8 mutaciones propias; yo probé 1 sobre lo añadido después.
+- E2E en Chromium (subagente, 44/44): búsqueda sin tildes y con errata, alta de adulto y menor, duplicados, DNI repetido (409), Kanban (menú y arrastre), Perdido con motivo, reabrir, actividad con próxima acción visible como "Vencida", conversión a paciente, estadísticas solo dueño, doctor sin cartera → asignación → ve → finalización → deja de ver, tablet 820 px sin scroll horizontal.
+
+**Bugs encontrados por las pruebas y corregidos**
+- "Maria Gomez" no encontraba a "María Gómez" (faltaba búsqueda sin tildes) y "gomes" no encontraba "Gómez" (`similarity` vs `word_similarity`).
+- Actividades creadas en la misma transacción tenían el mismo `created_at` (`now()` = inicio de transacción) → orden indefinido.
+- Conversión con error 500: `model_copy(update=)` recibía un string en vez de enum (no valida).
+- `assigned_to_name` provocó `MissingGreenlet` en lead recién creado/reasignado (relación no cargada) → se recarga el responsable.
+- `api.d.ts` (generado) se reformateaba con Prettier y rompería el chequeo de CI → añadido a `.prettierignore`.
+- Mi comando de pruebas mató mi propio shell / dejó un servidor huérfano **tres veces** (pkill y `cmd && script &`). Solución: `scripts/dev/start-api.sh` y `stop-api.py`; lección en CLAUDE.md.
+
+**NO verificado**
+- `docker compose` (sin daemon). Lectores de pantalla y contraste AA medido (solo revisión visual). Navegadores distintos de Chromium y arrastre táctil.
+- Los campos nuevos `assigned_to_name`/`lost_reason` en el E2E de navegador (se añadieron después de la corrida del subagente; cubiertos por pytest y vitest). La BD de desarrollo no tiene leads asignados ni perdidos para verlos.
+- **Push a GitHub bloqueado (403)**: 8 commits locales sin subir.
+
+**Observaciones del subagente sobre el API (no resueltas)**
+- Los 422 de FastAPI que no vienen de un validador propio llegan en inglés (p. ej. UUID inválido en la URL).
+- `GET /leads?assigned_to=` no permite filtrar "sin asignar".
+- `GET /patients/duplicates` exige PATIENTS_MANAGE (un doctor recibiría 403; es coherente pero hay que recordarlo).
+- `lost_reason` es texto libre: las estadísticas por motivo solo agrupan bien si se usan motivos repetidos (la UI sugiere los frecuentes). Convendría un catálogo.
+- `GET /leads/followups` no devuelve el *motivo* de la próxima acción, solo la hora.
+- Quedan datos de prueba (DNI 9000xxxx…, teléfonos +5190000…) en la BD de desarrollo: no se pueden borrar por API.
+
+**Datos y decisiones**
+- Fase 2 adelantó `care_team` desde la Fase 3/4 (base de la autorización de doctores).
+- En el frontend la edad/apoderado se calcula con la fecha de **Lima** (igual que el servidor) y la conversión solo se ofrece para leads abiertos (el servidor sí permitiría convertir uno perdido).
+
+**Siguiente paso**: Fase 3 — Agenda (horarios, excepciones, salas, citas sin solapamiento con constraint de exclusión, check-in, series de sesiones, creación automática de relación terapéutica al agendar).
 
 ---
 

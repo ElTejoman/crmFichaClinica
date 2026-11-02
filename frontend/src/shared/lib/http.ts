@@ -15,7 +15,7 @@ const API_PREFIX = '/api'
 const HTTP_UNAUTHORIZED = 401
 const HTTP_NO_CONTENT = 204
 
-type Method = 'GET' | 'POST' | 'PATCH'
+type Method = 'GET' | 'POST' | 'PATCH' | 'DELETE'
 
 export interface RequestOptions {
   signal?: AbortSignal
@@ -130,4 +130,8 @@ export function apiPost<T>(path: string, body?: unknown, options?: RequestOption
 
 export function apiPatch<T>(path: string, body: unknown, options?: RequestOptions): Promise<T> {
   return apiRequest<T>('PATCH', path, { ...options, body })
+}
+
+export function apiDelete(path: string, options?: RequestOptions): Promise<void> {
+  return apiRequest<void>('DELETE', path, options)
 }

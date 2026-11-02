@@ -4,11 +4,24 @@ import type { Role } from '@/shared/types/aliases'
  * Permisos de UI. Sirven SOLO para ocultar/mostrar pantallas y botones: la autorización real
  * la impone el servidor (RBAC en cada endpoint). docs/04-ROLES-Y-PERMISOS.md §2.
  */
-export type Permission = 'users:manage' | 'audit:read'
+export type Permission =
+  | 'users:manage'
+  | 'audit:read'
+  | 'patients:read'
+  | 'patients:manage'
+  | 'leads:read'
+  | 'leads:manage'
+  | 'leads:reports'
 
 const PERMISSION_ROLES: Record<Permission, readonly Role[]> = {
   'users:manage': ['SUPERUSER', 'OWNER'],
   'audit:read': ['SUPERUSER', 'OWNER'],
+  // Pacientes y CRM. Un DOCTOR sin rol administrativo solo ve SU cartera: lo filtra el servidor.
+  'patients:read': ['SUPERUSER', 'OWNER', 'DOCTOR', 'RECEPTION'],
+  'patients:manage': ['OWNER', 'RECEPTION'],
+  'leads:read': ['SUPERUSER', 'OWNER', 'DOCTOR', 'RECEPTION'],
+  'leads:manage': ['OWNER', 'RECEPTION'],
+  'leads:reports': ['OWNER'],
 }
 
 /** ¿Alguno de los roles del usuario concede el permiso? (usuario con múltiples roles = unión). */

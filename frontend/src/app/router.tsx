@@ -19,6 +19,87 @@ export const router = createBrowserRouter([
         children: [
           { path: '/', element: <HomePage /> },
           {
+            path: '/pacientes',
+            lazy: async () => {
+              const { PatientsPage } = await import('@/pages/PatientsPage')
+              return {
+                element: (
+                  <RoleGuard permission="patients:read">
+                    <PatientsPage />
+                  </RoleGuard>
+                ),
+              }
+            },
+          },
+          {
+            path: '/pacientes/nuevo',
+            lazy: async () => {
+              const { PatientNewPage } = await import('@/pages/PatientNewPage')
+              return {
+                element: (
+                  <RoleGuard permission="patients:manage">
+                    <PatientNewPage />
+                  </RoleGuard>
+                ),
+              }
+            },
+          },
+          {
+            path: '/pacientes/:patientId',
+            lazy: async () => {
+              const { PatientDetailPage } = await import('@/pages/PatientDetailPage')
+              return {
+                element: (
+                  <RoleGuard permission="patients:read">
+                    <PatientDetailPage />
+                  </RoleGuard>
+                ),
+              }
+            },
+          },
+          {
+            path: '/leads',
+            lazy: async () => {
+              const { LeadsPage } = await import('@/pages/LeadsPage')
+              return {
+                element: (
+                  <RoleGuard permission="leads:read">
+                    <LeadsPage />
+                  </RoleGuard>
+                ),
+              }
+            },
+          },
+          {
+            path: '/leads/:leadId',
+            lazy: async () => {
+              const { LeadDetailPage } = await import('@/pages/LeadDetailPage')
+              return {
+                element: (
+                  <RoleGuard permission="leads:read">
+                    <LeadDetailPage />
+                  </RoleGuard>
+                ),
+              }
+            },
+          },
+          {
+            path: '/leads/:leadId/convertir',
+            lazy: async () => {
+              const { LeadConvertPage } = await import('@/pages/LeadConvertPage')
+              // Convertir crea un paciente: exige gestionar leads Y pacientes.
+              return {
+                element: (
+                  <RoleGuard permission="leads:manage">
+                    <RoleGuard permission="patients:manage">
+                      <LeadConvertPage />
+                    </RoleGuard>
+                  </RoleGuard>
+                ),
+              }
+            },
+          },
+          {
             path: '/usuarios',
             lazy: async () => {
               const { UsersPage } = await import('@/pages/UsersPage')

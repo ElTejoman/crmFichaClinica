@@ -1,5 +1,12 @@
 import { clearAccessToken, getAccessToken, setAccessToken } from './accessToken'
-import { ApiError, apiGet, apiPost, refreshAccessToken, setSessionExpiredHandler } from './http'
+import {
+  ApiError,
+  apiDelete,
+  apiGet,
+  apiPost,
+  refreshAccessToken,
+  setSessionExpiredHandler,
+} from './http'
 
 function json(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -158,5 +165,14 @@ describe('cliente HTTP', () => {
     await expect(apiGet('/ready', { acceptStatuses: [503] })).resolves.toEqual({
       status: 'degraded',
     })
+  })
+
+  it('DELETE usa el método correcto y tolera 204 sin cuerpo', async () => {
+    setAccessToken('tok-1')
+    const fetchMock = mockFetch(() => new Response(null, { status: 204 }))
+    await expect(apiDelete('/patients/p1/care-team/d1')).resolves.toBeUndefined()
+    const [url, init] = fetchMock.mock.calls[0] ?? []
+    expect(url).toBe('/api/patients/p1/care-team/d1')
+    expect((init as RequestInit).method).toBe('DELETE')
   })
 })

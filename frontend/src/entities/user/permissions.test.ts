@@ -23,6 +23,38 @@ describe('can', () => {
   })
 })
 
+describe('can: pacientes y CRM', () => {
+  it('lectura: personal clínico y administrativo; el paciente no', () => {
+    for (const role of ['SUPERUSER', 'OWNER', 'DOCTOR', 'RECEPTION'] as const) {
+      expect(can([role], 'patients:read')).toBe(true)
+      expect(can([role], 'leads:read')).toBe(true)
+    }
+    expect(can(['PATIENT'], 'patients:read')).toBe(false)
+    expect(can(['PATIENT'], 'leads:read')).toBe(false)
+  })
+
+  it('gestión: solo OWNER y RECEPTION (ni doctor ni superusuario)', () => {
+    for (const permission of ['patients:manage', 'leads:manage'] as const) {
+      expect(can(['OWNER'], permission)).toBe(true)
+      expect(can(['RECEPTION'], permission)).toBe(true)
+      expect(can(['DOCTOR'], permission)).toBe(false)
+      expect(can(['SUPERUSER'], permission)).toBe(false)
+      expect(can(['PATIENT'], permission)).toBe(false)
+    }
+  })
+
+  it('estadísticas del CRM: solo OWNER', () => {
+    expect(can(['OWNER'], 'leads:reports')).toBe(true)
+    for (const role of ['SUPERUSER', 'DOCTOR', 'RECEPTION', 'PATIENT'] as const) {
+      expect(can([role], 'leads:reports')).toBe(false)
+    }
+  })
+
+  it('un dueño-doctor conserva los permisos de gestión por su rol OWNER', () => {
+    expect(can(['DOCTOR', 'OWNER'], 'patients:manage')).toBe(true)
+  })
+})
+
 describe('canAssignRole', () => {
   it('solo SUPERUSER asigna SUPERUSER u OWNER', () => {
     expect(canAssignRole(['OWNER'], 'OWNER')).toBe(false)

@@ -13,6 +13,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
 from app.models.mixins import TimestampMixin, UuidPrimaryKeyMixin
+from app.models.user import User
 
 
 class Lead(UuidPrimaryKeyMixin, TimestampMixin, Base):
@@ -43,6 +44,15 @@ class Lead(UuidPrimaryKeyMixin, TimestampMixin, Base):
         Uuid, ForeignKey("patients.id"), default=None
     )
     created_by: Mapped[uuid.UUID | None] = mapped_column(Uuid, ForeignKey("users.id"), default=None)
+
+    # Responsable: se carga junto al lead para mostrar su nombre sin consultas extra.
+    assignee: Mapped["User | None"] = relationship(
+        "User", foreign_keys=[assigned_to], lazy="selectin", viewonly=True
+    )
+
+    @property
+    def assigned_to_name(self) -> str | None:
+        return self.assignee.full_name if self.assignee else None
 
     activities: Mapped[list["LeadActivity"]] = relationship(
         back_populates="lead",

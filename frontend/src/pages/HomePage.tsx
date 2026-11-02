@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { can } from '@/entities/user'
 import { NAV_ITEMS } from '@/app/navigation'
 import { useAuth } from '@/features/auth'
+import { FollowupsWidget } from '@/features/leads'
 import { ApiStatus } from '@/features/system-status'
 import { ROLE_DESCRIPTIONS, ROLE_LABELS } from '@/shared/lib/labels'
 import { Badge } from '@/shared/ui'
@@ -32,6 +33,8 @@ export function HomePage() {
           ))}
         </ul>
       </section>
+
+      {can(user.roles, 'leads:read') && <FollowupsWidget />}
 
       {shortcuts.length > 0 && (
         <section aria-labelledby="shortcuts-title">

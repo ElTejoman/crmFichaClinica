@@ -101,13 +101,15 @@ class LeadSummary(BaseModel):
     status_changed_at: datetime
     next_action_at: datetime | None
     assigned_to: uuid.UUID | None
+    assigned_to_name: str | None
     consent_marketing: bool
     converted_patient_id: uuid.UUID | None
+    # Motivo de pérdida: la pestaña "Perdidos" del tablero lo muestra sin pedir cada detalle.
+    lost_reason: str | None
     updated_at: datetime
 
 
 class LeadRead(LeadSummary):
-    lost_reason: str | None
     notes: str | None
     created_at: datetime
     activities: list[LeadActivityRead]

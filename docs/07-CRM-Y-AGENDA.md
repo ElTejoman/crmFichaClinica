@@ -32,6 +32,7 @@
 - **Duplicados**: al crear un lead se compara teléfono/correo (normalizados) con leads **y** pacientes; devuelve 409 `possible_duplicate` con los candidatos y se puede forzar con `?allow_duplicate=true`.
 - **Conversión**: crea paciente + historia clínica y cierra el lead **en una sola transacción** (si cualquier paso falla, nada queda). La fuente del lead se conserva como `referral_source` del paciente. Un lead *perdido* también puede convertirse.
 - **Privacidad**: un DOCTOR solo ve los leads que se le asignaron; los leads no contienen datos clínicos.
+- **Tablero**: cada lead incluye `assigned_to_name` (cualquier personal, no solo doctores) y `lost_reason` para mostrar "Perdidos" sin pedir cada detalle. `lost_reason` es texto libre: convendría un catálogo de motivos para que las estadísticas agrupen bien.
 - **Estadísticas (solo OWNER)**: total, abiertos, convertidos, perdidos, tasa de conversión, y desgloses por estado, fuente, especialidad y motivo de pérdida.
 - **Pendiente**: "tiempo medio hasta la primera cita" (requiere agenda, Fase 3); importación CSV y formulario web.
 

@@ -215,6 +215,8 @@ class LeadService:
             if key in changes:
                 value = changes[key]
                 setattr(lead, key, value.value if hasattr(value, "value") else value)
+        if "assigned_to" in changes:
+            await self._leads.reload_assignee(lead)  # que la respuesta muestre al nuevo responsable
         if "interest_specialties" in changes and changes["interest_specialties"] is not None:
             lead.interest_specialties = sorted(s.value for s in changes["interest_specialties"])
 

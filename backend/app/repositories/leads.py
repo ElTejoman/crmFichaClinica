@@ -21,8 +21,14 @@ class LeadRepository:
         lead = Lead(**fields)
         lead.activities = []  # inicializa la relación (async no permite carga perezosa)
         self._session.add(lead)
-        await self._session.flush()
+        await self.reload_assignee(lead)
         return lead
+
+    async def reload_assignee(self, lead: Lead) -> None:
+        """Recarga el responsable: tras crear o reasignar, la relación no está cargada (o está
+        obsoleta) y SQLAlchemy async no permite cargarla de forma perezosa al serializar."""
+        await self._session.flush()
+        await self._session.refresh(lead, attribute_names=["assignee"])
 
     async def get(self, lead_id: uuid.UUID) -> Lead | None:
         return await self._session.get(Lead, lead_id)

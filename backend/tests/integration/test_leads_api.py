@@ -580,3 +580,33 @@ async def test_conversion_rolls_back_the_patient_if_a_later_step_fails(
     assert await _count(engine, "patients") == 0
     assert await _count(engine, "clinical_histories") == 0
     assert (await client.get(f"/leads/{lead['id']}", headers=headers)).json()["status"] == "NEW"
+
+
+async def test_lead_summary_includes_assignee_name_and_lost_reason(
+    client: AsyncClient, as_role: AsRole, session_factory: SessionFactory
+) -> None:
+    """El tablero muestra el responsable (cualquier personal) y el motivo en 'Perdidos'."""
+    headers = await as_role(Role.RECEPTION)
+    desk = await create_user(
+        session_factory, "otra.recep@clinica-demo.pe", [Role.RECEPTION], full_name="Marisol Rojas"
+    )
+    lead = await _create(client, headers, assigned_to=str(desk.id))
+    unassigned = await _create(client, headers)
+    await _patch(client, headers, lead["id"], status="LOST", lost_reason="Precio")
+
+    rows = {r["id"]: r for r in (await client.get("/leads", headers=headers)).json()}
+    assert rows[lead["id"]]["assigned_to_name"] == "Marisol Rojas"
+    assert rows[lead["id"]]["lost_reason"] == "Precio"
+    assert rows[unassigned["id"]]["assigned_to_name"] is None
+    assert rows[unassigned["id"]]["lost_reason"] is None
+    detail = (await client.get(f"/leads/{lead['id']}", headers=headers)).json()
+    assert detail["assigned_to_name"] == "Marisol Rojas"
+
+    # Reasignar y desasignar se reflejan en la misma respuesta (relación recargada).
+    other = await create_user(
+        session_factory, "dueno.doc@clinica-demo.pe", [Role.OWNER], full_name="Carmen Quispe"
+    )
+    reassigned = await _patch(client, headers, lead["id"], assigned_to=str(other.id))
+    assert reassigned.json()["assigned_to_name"] == "Carmen Quispe"
+    cleared = await _patch(client, headers, lead["id"], assigned_to=None)
+    assert cleared.json()["assigned_to"] is None and cleared.json()["assigned_to_name"] is None

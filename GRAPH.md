@@ -9,12 +9,12 @@ crmFichaClinica/
 ├─ docs/ ✅  (00 plan · 01 investigación · 02 arquitectura · 03 datos · 04 roles · 05 fichas · 06 seguridad · 07 crm/agenda)
 ├─ .claude/skills/ ✅  (backend-layer-feature · frontend-feature · clinical-specialty-module)
 ├─ docker-compose.yml ✅  docker-compose.prod.yml ✅  .env.example ✅  .gitignore ✅  .pre-commit-config.yaml ✅
-├─ .github/workflows/ci.yml ✅
+├─ .github/workflows/ci.yml ✅  scripts/dev/{start-api.sh, stop-api.py} ✅
 ├─ backend/ ✅ (Fase 0: core, health, tests de arquitectura; resto ⬜)
 │  ├─ app/{main.py, core/, domain/{policies/, specialties/}, models/, repositories/, services/, schemas/, api/{deps.py, v1/}}
 │  ├─ alembic/  tests/{unit,integration,architecture}  scripts/{seed.py, verify_audit_chain.py}
-│  └─ pyproject.toml ✅  Dockerfile ✅  alembic/versions/{0001 extensiones, 0002 identidad+auditoría} ✅
-└─ frontend/ ✅ (Fase 0-1: shell, auth, users, audit, system-status; resto ⬜)
+│  └─ pyproject.toml ✅  Dockerfile ✅  alembic/versions/{0001 extensiones, 0002 identidad+auditoría, 0003 pacientes+CRM} ✅
+└─ frontend/ ✅ (Fases 0-2: shell, auth, users, audit, patients, leads; resto ⬜)
    ├─ src/{app/, shared/, entities/, features/{auth,patients,leads,agenda,dashboard,clinical-record/{core,specialties/*}}, pages/}
    └─ package.json  vite.config.ts  tsconfig.json  Dockerfile
 ```
@@ -99,5 +99,18 @@ sequenceDiagram
 | `pages/` | Home, Login, Users, Audit, Forbidden, NotFound |
 Rutas: `/login` (pública) · `/` · `/usuarios` y `/auditoria` (OWNER/SUPERUSER).
 
-## 7. Estado
-Ver `LOGS.md`. Hoy: Fases 0 y 1 completas (backend + frontend).
+## 7. Fase 2 — componentes implementados
+| Zona | Contenido |
+|---|---|
+| `backend/domain` | `patient_rules` (documento, edad, teléfono, HC, apoderado), `lead_funnel` (transiciones), permisos de pacientes/leads |
+| `backend/models` | `patient` (Patient, ClinicalHistory, CareTeamMember), `lead` (Lead, LeadActivity) |
+| `backend/repositories` | `patients` (búsqueda trigram+unaccent, duplicados), `care_team`, `leads` (filtros, seguimientos, estadísticas), `errors` |
+| `backend/services` | `patients` (alta+HC, acceso por relación terapéutica, edición, equipo), `leads` (embudo, actividades, conversión atómica, estadísticas) |
+| `backend/api/v1` | `patients`, `leads`, `doctors` |
+| `frontend/entities` | `patient` (formulario compartido, edad, duplicados), `doctor`, `user/permissions` |
+| `frontend/features` | `patients` (lista, alta, ficha, equipo tratante), `leads` (Kanban, detalle, actividades, conversión, seguimientos, estadísticas) |
+| `frontend/shared/ui` | + Dialog, Tabs, Textarea, CheckboxField |
+Rutas nuevas: `/pacientes` · `/pacientes/nuevo` · `/pacientes/:id` · `/leads` · `/leads/:id` · `/leads/:id/convertir`.
+
+## 8. Estado
+Ver `LOGS.md`. Hoy: Fases 0, 1 y 2 completas (backend + frontend).

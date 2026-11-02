@@ -1,4 +1,14 @@
-import type { ProfessionalBody, Role, Specialty } from '@/shared/types/aliases'
+import type {
+  DocumentType,
+  LeadActivityType,
+  LeadSource,
+  LeadStatus,
+  MaritalStatus,
+  ProfessionalBody,
+  Role,
+  Sex,
+  Specialty,
+} from '@/shared/types/aliases'
 
 /** Etiquetas en español (Perú) para los valores del contrato. El código usa los valores en inglés. */
 export const ROLE_LABELS: Record<Role, string> = {
@@ -44,6 +54,82 @@ export const PROFESSIONAL_BODY_LABELS: Record<ProfessionalBody, string> = {
 
 export const ALL_PROFESSIONAL_BODIES: readonly ProfessionalBody[] = ['CMP', 'COP', 'CNP', 'OTHER']
 
+export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
+  DNI: 'DNI',
+  CE: 'Carné de extranjería',
+  PASSPORT: 'Pasaporte',
+  OTHER: 'Otro documento',
+}
+
+export const ALL_DOCUMENT_TYPES: readonly DocumentType[] = ['DNI', 'CE', 'PASSPORT', 'OTHER']
+
+export const SEX_LABELS: Record<Sex, string> = {
+  FEMALE: 'Femenino',
+  MALE: 'Masculino',
+  OTHER: 'Otro',
+}
+
+export const ALL_SEXES: readonly Sex[] = ['FEMALE', 'MALE', 'OTHER']
+
+export const MARITAL_STATUS_LABELS: Record<MaritalStatus, string> = {
+  SINGLE: 'Soltero/a',
+  MARRIED: 'Casado/a',
+  COHABITING: 'Conviviente',
+  DIVORCED: 'Divorciado/a',
+  WIDOWED: 'Viudo/a',
+}
+
+export const ALL_MARITAL_STATUSES: readonly MaritalStatus[] = [
+  'SINGLE',
+  'MARRIED',
+  'COHABITING',
+  'DIVORCED',
+  'WIDOWED',
+]
+
+export const LEAD_SOURCE_LABELS: Record<LeadSource, string> = {
+  WEB: 'Página web',
+  REFERRAL: 'Referido',
+  INSTAGRAM: 'Instagram',
+  FACEBOOK: 'Facebook',
+  WALK_IN: 'Visita directa',
+  OTHER: 'Otra',
+}
+
+export const ALL_LEAD_SOURCES: readonly LeadSource[] = [
+  'WEB',
+  'REFERRAL',
+  'INSTAGRAM',
+  'FACEBOOK',
+  'WALK_IN',
+  'OTHER',
+]
+
+export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
+  NEW: 'Nuevo',
+  CONTACTED: 'Contactado',
+  QUALIFIED: 'Calificado',
+  APPOINTMENT_SET: 'Cita agendada',
+  CONVERTED: 'Convertido',
+  LOST: 'Perdido',
+}
+
+export const ACTIVITY_TYPE_LABELS: Record<LeadActivityType, string> = {
+  CALL: 'Llamada',
+  WHATSAPP: 'WhatsApp',
+  EMAIL: 'Correo',
+  NOTE: 'Nota',
+  STATUS_CHANGE: 'Cambio de estado',
+}
+
+/** Tipos que el usuario puede registrar a mano (STATUS_CHANGE lo genera el servidor). */
+export const REGISTRABLE_ACTIVITY_TYPES: readonly LeadActivityType[] = [
+  'CALL',
+  'WHATSAPP',
+  'EMAIL',
+  'NOTE',
+]
+
 /** Nombres de campos del API para mensajes de validación (422 estándar de FastAPI). */
 export const FIELD_LABELS: Record<string, string> = {
   email: 'Correo',
@@ -58,6 +144,16 @@ export const FIELD_LABELS: Record<string, string> = {
   specialties: 'Especialidades',
   limit: 'Límite',
   offset: 'Desplazamiento',
+  document_number: 'Documento',
+  first_name: 'Nombres',
+  last_name: 'Apellidos',
+  birth_date: 'Fecha de nacimiento',
+  guardian: 'Apoderado',
+  emergency_contact: 'Contacto de emergencia',
+  patient: 'Paciente',
+  interest_specialties: 'Especialidades de interés',
+  lost_reason: 'Motivo de pérdida',
+  next_action_at: 'Próxima acción',
 }
 
 /** Etiqueta de un rol; si el servidor añadiera uno nuevo se muestra tal cual en vez de fallar. */
