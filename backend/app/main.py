@@ -29,6 +29,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         engine = build_engine(settings.database_url)
         app.state.engine = engine
+        app.state.settings = settings
         app.state.session_factory = build_session_factory(engine)
         logger.info("API iniciada (%s)", settings.environment)
         yield

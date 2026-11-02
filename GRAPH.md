@@ -13,7 +13,7 @@ crmFichaClinica/
 ├─ backend/ ✅ (Fase 0: core, health, tests de arquitectura; resto ⬜)
 │  ├─ app/{main.py, core/, domain/{policies/, specialties/}, models/, repositories/, services/, schemas/, api/{deps.py, v1/}}
 │  ├─ alembic/  tests/{unit,integration,architecture}  scripts/{seed.py, verify_audit_chain.py}
-│  └─ pyproject.toml ✅  Dockerfile ✅  alembic/versions/0001_baseline_extensions.py ✅
+│  └─ pyproject.toml ✅  Dockerfile ✅  alembic/versions/{0001 extensiones, 0002 identidad+auditoría} ✅
 └─ frontend/ ✅ (Fase 0: shell, proveedores, feature system-status; resto ⬜)
    ├─ src/{app/, shared/, entities/, features/{auth,patients,leads,agenda,dashboard,clinical-record/{core,specialties/*}}, pages/}
    └─ package.json  vite.config.ts  tsconfig.json  Dockerfile
@@ -74,5 +74,17 @@ sequenceDiagram
     API->>DB: addendum + audit(AMEND)
 ```
 
-## 5. Estado
-Ver `LOGS.md`. Hoy: Fase 0 completa (esqueleto ejecutable, sin lógica de negocio todavía).
+## 5. Fase 1 — componentes implementados (backend)
+| Capa | Módulos |
+|---|---|
+| `domain` | `enums`, `password_policy`, `audit_chain`, `policies/permissions` (RBAC) |
+| `models` | `user` (User, UserRole, DoctorProfile, DoctorSpecialty, RefreshToken), `audit_log` |
+| `repositories` | `users`, `refresh_tokens`, `audit`, `unit_of_work` |
+| `services` | `auth`, `users`, `audit` |
+| `schemas` | `auth`, `users`, `audit` |
+| `api/v1` | `auth` (login/refresh/logout/me), `users` (CRUD), `audit` (listar/verificar) |
+| `core` | `security` (Argon2id, JWT, refresh), `clock`, `config` (cookies, bloqueo) |
+| `scripts` | `seed.py` (8 usuarios demo), `export_openapi.py` |
+
+## 6. Estado
+Ver `LOGS.md`. Hoy: Fase 0 completa; Fase 1 backend completo (ver LOGS).

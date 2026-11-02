@@ -31,8 +31,10 @@
 ```
 row_hash = SHA256( prev_hash || ts || actor || action || resource || patient || outcome )
 ```
-- Verificador `scripts/verify_audit_chain.py` detecta alteraciones.
+- Verificación por API: `GET /audit-logs/verify` recalcula toda la cadena y devuelve la primera fila alterada.
 - Se audita **lectura** de fichas, no solo escrituras.
+- **Defensa en profundidad (implementado en Fase 1)**: (1) trigger de BD que rechaza `UPDATE/DELETE/TRUNCATE` sobre `audit_logs`; (2) cadena de hash que *detecta* alteración o borrado de filas intermedias; (3) bloqueo consultivo (`pg_advisory_xact_lock`) que serializa las escrituras para que la cadena no se bifurque.
+- **Limitación conocida**: la cadena **no detecta el borrado de las últimas filas** (cola), porque no hay una fila posterior que lo revele. Solo el trigger lo impide; un administrador de BD con privilegios podría desactivarlo. Mitigación prevista (Fase 7): exportar periódicamente el último `row_hash` a un almacenamiento externo (ancla) y compararlo en la verificación.
 - Vista para el paciente: "quién accedió a mi historia".
 
 ## 4. Integridad clínica
@@ -57,3 +59,18 @@ row_hash = SHA256( prev_hash || ts || actor || action || resource || patient || 
 - [ ] Backups y restauración probados
 - [ ] Pen-test básico o revisión de seguridad
 - [ ] Capacitación de personal y política de contraseñas
+
+## 8. Implementado en Fase 1 (estado real)
+| Control | Implementación | Probado |
+|---|---|---|
+| Hash de contraseñas | Argon2id; rehash transparente si cambian los parámetros | ✅ unit |
+| Anti-enumeración | Misma respuesta 401 para correo inexistente y clave errónea; verificación de relleno para igualar tiempos | ✅ integración |
+| Fuerza bruta | 5 fallos → bloqueo 15 min (configurable); se audita | ✅ integración + mutación |
+| Access token | JWT 15 min, algoritmo fijo (rechaza `alg=none`), sin roles dentro; el usuario se **recarga de BD en cada petición** → desactivar o cambiar roles surte efecto inmediato | ✅ |
+| Refresh token | Opaco, solo se guarda su SHA-256, cookie `httpOnly; SameSite=Strict`, **rotación** y **detección de reutilización** (revoca toda la familia) | ✅ + mutación |
+| RBAC | `require_permission` en servidor; cada denegación se audita (`PERMISSION_DENIED`) | ✅ matriz por rol |
+| Anti-escalada | Solo SUPERUSER asigna/retira OWNER o SUPERUSER; un OWNER no puede modificar a un SUPERUSER ni desactivarse a sí mismo | ✅ |
+| Política de contraseñas | ≥12 caracteres, letra y número, no común, no contiene el correo | ✅ unit |
+| Auditoría | Append-only (trigger) + hash encadenado + endpoint de verificación; concurrencia probada con 20 escrituras simultáneas | ✅ |
+
+**Pendiente (Fases 6-7)**: 2FA TOTP, rate limiting por IP, `X-Forwarded-For` desde proxies de confianza, ancla externa del hash de auditoría, lista ampliada de contraseñas comunes, y CSRF adicional si se sirviera el front desde otro origen.

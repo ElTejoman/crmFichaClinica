@@ -34,11 +34,29 @@ class Settings(BaseSettings):
     jwt_access_minutes: int = 15
     jwt_refresh_days: int = 7
 
+    # Cookie del refresh token: httpOnly (JS no la lee → mitiga XSS) y SameSite=Strict
+    # (mitiga CSRF).
+    # El navegador ve la API bajo `/api` (proxy Vite/Nginx), por eso ese es el path por defecto.
+    refresh_cookie_name: str = "refresh_token"
+    refresh_cookie_path: str = "/api/auth"
+    refresh_cookie_secure: bool | None = None  # None → True solo en producción
+
+    # Bloqueo progresivo ante fuerza bruta (docs/04 §4).
+    max_failed_logins: int = 5
+    lockout_minutes: int = 15
+
     # --- CORS ----------------------------------------------------------
     cors_origins: list[str] = ["http://localhost:5173"]
 
     # --- Normativa (parámetros configurables, ver docs/01 [VERIFICAR]) ---
     retention_years: int = 20
+
+    @property
+    def cookie_secure(self) -> bool:
+        """Cookie `Secure` salvo en desarrollo/test (http://localhost no soporta Secure)."""
+        if self.refresh_cookie_secure is not None:
+            return self.refresh_cookie_secure
+        return self.environment == "production"
 
     def assert_safe_for_production(self) -> None:
         """Evita desplegar con secretos de desarrollo (riesgo de datos de salud)."""
