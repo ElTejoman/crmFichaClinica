@@ -74,3 +74,22 @@ row_hash = SHA256( prev_hash || ts || actor || action || resource || patient || 
 | Auditoría | Append-only (trigger) + hash encadenado + endpoint de verificación; concurrencia probada con 20 escrituras simultáneas | ✅ |
 
 **Pendiente (Fases 6-7)**: 2FA TOTP, rate limiting por IP, `X-Forwarded-For` desde proxies de confianza, ancla externa del hash de auditoría, lista ampliada de contraseñas comunes, y CSRF adicional si se sirviera el front desde otro origen.
+
+## 9. Implementado en Fase 2 (estado real)
+| Control | Implementación | Probado |
+|---|---|---|
+| Consentimiento de datos (Ley 29733) | Obligatorio al registrar paciente; se guarda la fecha | ✅ |
+| Auditoría de lectura de pacientes | Cada `GET /patients/{id}` registra `READ` con `patient_id` | ✅ |
+| Auditoría sin datos personales | Se guardan solo **nombres** de campos modificados; test que busca nombre, documento, teléfono y dirección en toda la tabla | ✅ + mutación |
+| Mínimo privilegio sobre la cartera | Doctor: solo pacientes con relación activa y leads asignados; denegaciones auditadas | ✅ + mutación |
+| Minimización | Listados devuelven solo identificación; duplicados con documento enmascarado | ✅ |
+| Integridad de altas | Una historia por paciente; alta concurrente con el mismo documento → exactamente 1 paciente (restricción de BD) | ✅ |
+| Atomicidad | Conversión lead→paciente todo-o-nada (probado con fallo tardío simulado) | ✅ + mutación |
+| Sin borrado físico | Pacientes se archivan (`is_active`); no hay endpoint de borrado | ✅ |
+
+**Limitaciones conocidas (Fase 2)**
+- La **búsqueda/listado** no se audita fila por fila (solo la lectura individual): devuelve datos mínimos, pero un usuario con permiso podría enumerar pacientes. Mitigación posible: limitar ritmo y alertar patrones atípicos (Fase 7).
+- El **documento de identidad no es editable** por API; corregirlo requerirá un flujo excepcional del OWNER con auditoría.
+- El consentimiento de datos se registra con la fecha, pero aún no **quién** lo otorgó (en menores debería ser el apoderado) ni la versión del texto: llegará con la tabla `consents` (Fase 4).
+- La relación terapéutica se asigna **a mano**; la automática al agendar llega en Fase 3.
+- Normalización telefónica y formato de CE: **[VERIFICAR]** contra el plan de numeración y la norma migratoria.

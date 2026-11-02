@@ -1,6 +1,8 @@
 """Utilidades de tests: crear usuarios y autenticarse."""
 
+import itertools
 from collections.abc import Iterable
+from typing import Any
 
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
@@ -52,3 +54,36 @@ async def login(client: AsyncClient, email: str, password: str = PASSWORD) -> di
     response = await client.post("/auth/login", json={"email": email, "password": password})
     assert response.status_code == 200, response.text
     return {"Authorization": f"Bearer {response.json()['access_token']}"}
+
+
+_dni_counter = itertools.count(40_000_000)
+
+
+def patient_payload(**overrides: Any) -> dict[str, Any]:
+    """Cuerpo válido de `POST /patients` (adulto, DNI único por llamada)."""
+    payload: dict[str, Any] = {
+        "document_type": "DNI",
+        "document_number": str(next(_dni_counter)),
+        "first_name": "María",
+        "last_name": "Gómez Ríos",
+        "birth_date": "1988-03-14",
+        "sex": "FEMALE",
+        "data_processing_consent": True,
+    }
+    payload.update(overrides)
+    return payload
+
+
+def lead_payload(**overrides: Any) -> dict[str, Any]:
+    """Cuerpo válido de `POST /leads` (teléfono único por llamada)."""
+    payload: dict[str, Any] = {
+        "full_name": "Pedro Castillo",
+        "phone": f"9{next(_phone_counter)}",
+        "source": "INSTAGRAM",
+        "interest_specialties": ["NUTRITION"],
+    }
+    payload.update(overrides)
+    return payload
+
+
+_phone_counter = itertools.count(10_000_000)

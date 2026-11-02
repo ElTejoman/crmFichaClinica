@@ -14,23 +14,50 @@ class Permission(StrEnum):
     USERS_READ = "users:read"
     USERS_MANAGE = "users:manage"
     AUDIT_READ = "audit:read"
+    PATIENTS_READ = "patients:read"
+    PATIENTS_MANAGE = "patients:manage"
+    LEADS_READ = "leads:read"
+    LEADS_MANAGE = "leads:manage"
+    LEADS_REPORTS = "leads:reports"
 
+
+_ADMIN_PERMISSIONS = frozenset(
+    {Permission.USERS_READ, Permission.USERS_MANAGE, Permission.AUDIT_READ}
+)
 
 # Principio de mínimo privilegio: SUPERUSER administra la plataforma; el contenido clínico
 # se le concederá solo vía *break-glass* auditado (Fase 6), no por rol.
+# Pacientes y CRM aquí son datos *administrativos*: el contenido clínico tendrá permisos
+# propios en la Fase 4 y recepción nunca los recibirá.
 ROLE_PERMISSIONS: dict[Role, frozenset[Permission]] = {
-    Role.SUPERUSER: frozenset(
-        {Permission.USERS_READ, Permission.USERS_MANAGE, Permission.AUDIT_READ}
+    Role.SUPERUSER: _ADMIN_PERMISSIONS | {Permission.PATIENTS_READ, Permission.LEADS_READ},
+    Role.OWNER: _ADMIN_PERMISSIONS
+    | {
+        Permission.PATIENTS_READ,
+        Permission.PATIENTS_MANAGE,
+        Permission.LEADS_READ,
+        Permission.LEADS_MANAGE,
+        Permission.LEADS_REPORTS,
+    },
+    Role.DOCTOR: frozenset({Permission.PATIENTS_READ, Permission.LEADS_READ}),
+    Role.RECEPTION: frozenset(
+        {
+            Permission.PATIENTS_READ,
+            Permission.PATIENTS_MANAGE,
+            Permission.LEADS_READ,
+            Permission.LEADS_MANAGE,
+        }
     ),
-    Role.OWNER: frozenset({Permission.USERS_READ, Permission.USERS_MANAGE, Permission.AUDIT_READ}),
-    Role.DOCTOR: frozenset(),
-    Role.RECEPTION: frozenset(),
     Role.PATIENT: frozenset(),
 }
 
 # Roles "sensibles": solo un SUPERUSER puede otorgarlos o retirarlos (evita escalada de privilegios
 # por parte de un OWNER comprometido o de un error de configuración).
 PRIVILEGED_ROLES: frozenset[Role] = frozenset({Role.SUPERUSER, Role.OWNER})
+
+# Roles con visión completa de la cartera administrativa. Un DOCTOR "puro" solo ve a los
+# pacientes con quienes tiene relación terapéutica y a los leads que se le asignaron.
+_FULL_PORTFOLIO_ROLES: frozenset[Role] = frozenset({Role.SUPERUSER, Role.OWNER, Role.RECEPTION})
 
 
 def permissions_for(roles: Iterable[Role]) -> frozenset[Permission]:
@@ -49,3 +76,8 @@ def can_assign_roles(actor_roles: Iterable[Role], changed_roles: Iterable[Role])
     """¿Puede el actor otorgar/retirar estos roles? Los privilegiados exigen SUPERUSER."""
     needs_superuser = any(role in PRIVILEGED_ROLES for role in changed_roles)
     return not needs_superuser or Role.SUPERUSER in set(actor_roles)
+
+
+def sees_full_portfolio(roles: Iterable[Role]) -> bool:
+    """¿Ve a todos los pacientes/leads? (si no, solo los suyos: relación terapéutica)."""
+    return any(role in _FULL_PORTFOLIO_ROLES for role in roles)

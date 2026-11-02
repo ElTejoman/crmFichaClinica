@@ -5,10 +5,13 @@ Cada fase añade aquí su router (patients, leads, agenda, clinical...).
 
 from fastapi import APIRouter
 
-from app.api.v1 import audit, auth, health, users
+from app.api.v1 import audit, auth, doctors, health, leads, patients, users
 
 api_router = APIRouter()
 api_router.include_router(health.router)
 api_router.include_router(auth.router)
 api_router.include_router(users.router)
 api_router.include_router(audit.router)
+api_router.include_router(patients.router)
+api_router.include_router(leads.router)
+api_router.include_router(doctors.router)

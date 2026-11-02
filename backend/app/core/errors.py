@@ -4,6 +4,8 @@ Los servicios lanzan estas excepciones (no conocen HTTP); un único manejador en
 `main.py` las convierte en respuestas JSON uniformes. Así se mantiene la regla de capas.
 """
 
+from typing import Any
+
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
@@ -14,9 +16,13 @@ class AppError(Exception):
     status_code = 400
     code = "app_error"
 
-    def __init__(self, message: str = "Error de aplicación") -> None:
+    def __init__(
+        self, message: str = "Error de aplicación", details: dict[str, Any] | None = None
+    ) -> None:
         super().__init__(message)
         self.message = message
+        # Datos estructurados para el front (p. ej. candidatos a duplicado). Sin datos clínicos.
+        self.details = details
 
 
 class NotFoundError(AppError):
@@ -34,6 +40,13 @@ class PermissionDeniedError(AppError):
     code = "permission_denied"
 
 
+class BusinessRuleError(AppError):
+    """Una regla de negocio impide la operación (los datos son válidos pero la acción no)."""
+
+    status_code = 422
+    code = "business_rule_violation"
+
+
 class AuthenticationError(AppError):
     status_code = 401
     code = "not_authenticated"
@@ -44,7 +57,7 @@ def register_error_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(AppError)
     async def handle_app_error(_: Request, exc: AppError) -> JSONResponse:
-        return JSONResponse(
-            status_code=exc.status_code,
-            content={"error": {"code": exc.code, "message": exc.message}},
-        )
+        error: dict[str, Any] = {"code": exc.code, "message": exc.message}
+        if exc.details:
+            error["details"] = exc.details
+        return JSONResponse(status_code=exc.status_code, content={"error": error})

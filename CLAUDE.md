@@ -33,7 +33,13 @@ CRM + ficha clínica para **una clínica en Lima, Perú** con 5 especialidades: 
 - httpx ignora cookies de dominios sin punto (`test`): enviar `Cookie` explícito, no depender del cookie-jar.
 - SQLAlchemy async: toda relación que se serialice debe cargarse (`lazy="selectin"`) o inicializarse; nunca depender de carga perezosa.
 - Un servicio que audita un fallo debe `commit` **antes** de lanzar el error.
-- No usar `pkill -f <patrón>` si el patrón aparece en la propia línea de comandos del shell.
+- **Procesos**: nunca `pkill -f` ni `ps|grep|kill` (coinciden con el propio shell y lo matan; ya pasó 3 veces). Usar `bash scripts/dev/start-api.sh > /tmp/api.log 2>&1 & echo $! > /tmp/api.pid` (usa `exec`: el PID es el del servidor) y `kill $(cat /tmp/api.pid)`, o `python3 scripts/dev/stop-api.py`. Un `cmd1 && cmd2 &` guarda el PID del subshell, no del servidor.
+- **Scripts de parcheo**: toda sustitución debe hacer `assert ancla in texto` ANTES de reemplazar. `ruff format` reescribe el código entre pasos y un `str.replace` sin assert falla en silencio (me costó 3 migraciones/archivos a medias).
+- **Migraciones**: `alembic revision --autogenerate` NO crea secuencias, funciones ni extensiones: añadirlas a mano. Verificar siempre el ciclo `upgrade → alembic check → downgrade → upgrade → alembic check`. No editar una migración ya aplicada sin hacer downgrade antes.
+- **Pydantic**: `model_copy(update=...)` NO valida ni convierte: pasar enums, no strings (si no, falla más adelante con un 500).
+- **Hora en PostgreSQL**: `now()` es la hora de INICIO de la transacción; filas creadas juntas empatan. Si importa el orden, fijar `utcnow()` en Python.
+- **SQLAlchemy 2.1 async**: `Select[Patient]` (no `Select[tuple[...]]`); arrays: `literal(x) == any_(col)`; columnas con `server_default`/`onupdate` necesitan `eager_defaults` (ya en `TimestampMixin`) o fallan al serializar.
+- **Búsqueda en español**: siempre sin tildes (`f_unaccent`) y tolerante a erratas (`<%` word_similarity); escapar `% _ \` del usuario en LIKE.
 
 ## Honestidad normativa
 Lo marcado **[VERIFICAR]** en `docs/01-INVESTIGACION-FICHA-CLINICA.md` NO está confirmado (NTS 139, retención 20 años, firma digital, NTS odontograma, bandera roja de quiropraxia). No presentarlo como hecho. Los textos de consentimiento son **ejemplos no legales**.

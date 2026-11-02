@@ -18,13 +18,18 @@ from app.domain.enums import AuditAction, AuditOutcome
 from app.domain.policies.permissions import Permission, can
 from app.models.user import User
 from app.repositories.audit import AuditRepository
+from app.repositories.care_team import CareTeamRepository
 from app.repositories.health import HealthRepository
+from app.repositories.leads import LeadRepository
+from app.repositories.patients import PatientRepository
 from app.repositories.refresh_tokens import RefreshTokenRepository
 from app.repositories.unit_of_work import UnitOfWork
 from app.repositories.users import UserRepository
 from app.services.audit import AuditService, RequestContext
 from app.services.auth import AuthService
 from app.services.health import HealthService
+from app.services.leads import LeadService
+from app.services.patients import PatientService
 from app.services.users import UserService
 
 
@@ -92,10 +97,42 @@ def get_user_service(
     return UserService(users=UserRepository(session), audit=audit, uow=UnitOfWork(session))
 
 
+def get_patient_service(
+    session: DbSession,
+    audit: Annotated[AuditService, Depends(get_audit_service)],
+    settings: SettingsDep,
+) -> PatientService:
+    return PatientService(
+        patients=PatientRepository(session),
+        care_team=CareTeamRepository(session),
+        users=UserRepository(session),
+        audit=audit,
+        uow=UnitOfWork(session),
+        settings=settings,
+    )
+
+
+def get_lead_service(
+    session: DbSession,
+    audit: Annotated[AuditService, Depends(get_audit_service)],
+    patient_service: Annotated[PatientService, Depends(get_patient_service)],
+) -> LeadService:
+    return LeadService(
+        leads=LeadRepository(session),
+        patients=PatientRepository(session),
+        patient_service=patient_service,
+        users=UserRepository(session),
+        audit=audit,
+        uow=UnitOfWork(session),
+    )
+
+
 HealthServiceDep = Annotated[HealthService, Depends(get_health_service)]
 AuditServiceDep = Annotated[AuditService, Depends(get_audit_service)]
 AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
 UserServiceDep = Annotated[UserService, Depends(get_user_service)]
+PatientServiceDep = Annotated[PatientService, Depends(get_patient_service)]
+LeadServiceDep = Annotated[LeadService, Depends(get_lead_service)]
 
 
 # ------------------------------------------------------ autenticación / permisos
@@ -153,3 +190,8 @@ def require_permission(permission: Permission) -> Callable[..., Awaitable[User]]
 UsersReader = Annotated[User, Depends(require_permission(Permission.USERS_READ))]
 UsersManager = Annotated[User, Depends(require_permission(Permission.USERS_MANAGE))]
 AuditReader = Annotated[User, Depends(require_permission(Permission.AUDIT_READ))]
+PatientsReader = Annotated[User, Depends(require_permission(Permission.PATIENTS_READ))]
+PatientsManager = Annotated[User, Depends(require_permission(Permission.PATIENTS_MANAGE))]
+LeadsReader = Annotated[User, Depends(require_permission(Permission.LEADS_READ))]
+LeadsManager = Annotated[User, Depends(require_permission(Permission.LEADS_MANAGE))]
+LeadsReports = Annotated[User, Depends(require_permission(Permission.LEADS_REPORTS))]

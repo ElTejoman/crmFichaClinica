@@ -26,6 +26,16 @@ class UserRepository:
         )
         return list(result.scalars().all())
 
+    async def list_doctors(self) -> list[User]:
+        """Usuarios activos con rol DOCTOR (directorio para asignaciones)."""
+        result = await self._session.execute(
+            select(User)
+            .join(UserRole, UserRole.user_id == User.id)
+            .where(UserRole.role == Role.DOCTOR.value, User.is_active.is_(True))
+            .order_by(User.full_name)
+        )
+        return list(result.scalars().unique())
+
     async def add(
         self,
         *,

@@ -57,3 +57,52 @@ class AuditOutcome(StrEnum):
     SUCCESS = "SUCCESS"
     DENIED = "DENIED"
     FAILURE = "FAILURE"
+
+
+class DocumentType(StrEnum):
+    DNI = "DNI"
+    CE = "CE"  # Carné de extranjería
+    PASSPORT = "PASSPORT"
+    OTHER = "OTHER"
+
+
+class Sex(StrEnum):
+    FEMALE = "FEMALE"
+    MALE = "MALE"
+    OTHER = "OTHER"
+
+
+class MaritalStatus(StrEnum):
+    SINGLE = "SINGLE"
+    MARRIED = "MARRIED"
+    COHABITING = "COHABITING"
+    DIVORCED = "DIVORCED"
+    WIDOWED = "WIDOWED"
+
+
+class LeadSource(StrEnum):
+    WEB = "WEB"
+    REFERRAL = "REFERRAL"
+    INSTAGRAM = "INSTAGRAM"
+    FACEBOOK = "FACEBOOK"
+    WALK_IN = "WALK_IN"
+    OTHER = "OTHER"
+
+
+class LeadStatus(StrEnum):
+    """Embudo del CRM (docs/07 §1)."""
+
+    NEW = "NEW"
+    CONTACTED = "CONTACTED"
+    QUALIFIED = "QUALIFIED"
+    APPOINTMENT_SET = "APPOINTMENT_SET"
+    CONVERTED = "CONVERTED"
+    LOST = "LOST"
+
+
+class LeadActivityType(StrEnum):
+    CALL = "CALL"
+    WHATSAPP = "WHATSAPP"
+    EMAIL = "EMAIL"
+    NOTE = "NOTE"
+    STATUS_CHANGE = "STATUS_CHANGE"

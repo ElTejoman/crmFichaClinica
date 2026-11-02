@@ -139,3 +139,18 @@ erDiagram
 - Única `(document_type, document_number)`.
 - `appointments` sin solapamiento por doctor/sala (constraint de exclusión `tstzrange`).
 - `audit_logs`: `REVOKE UPDATE, DELETE` al rol de la aplicación.
+
+
+## 5. Implementado en Fase 2 (pacientes y CRM): desviaciones del diseño original
+| Tema | Diseño original | Implementado | Motivo |
+|---|---|---|---|
+| Apoderado y contacto de emergencia | JSON anidado | **Columnas planas** `guardian_*` / `emergency_contact_*` | Se pueden consultar, indexar y validar en BD; la API sigue exponiéndolos como objetos anidados |
+| Nº de historia clínica | "secuencial" | `hc_number` desde la **secuencia de BD** `hc_number_seq`; presentación `HC-000042` | Sin huecos ni duplicados bajo concurrencia (probado con 5 altas simultáneas) |
+| Retención | `retention_until` | Se calcula al abrir: hoy + `RETENTION_YEARS` (20, **[VERIFICAR]**) | Se recalculará con la última atención en Fase 4 |
+| Relación terapéutica (`care_team`) | Fase 3/4 | **Adelantada a Fase 2** (asignar/finalizar doctor) | Es la base de la autorización de doctores sobre pacientes; mejor probarla desde ya |
+| Archivado de pacientes | — | `is_active` (nunca se borra) | Regla de datos clínicos: sin borrado físico |
+| Próxima acción del lead | derivada | `leads.next_action_at` **denormalizada** + `status_changed_at` | "Seguimientos de hoy" con una consulta simple e indexada |
+| Búsqueda de pacientes | `pg_trgm` | `pg_trgm` + **`f_unaccent()`** (envoltorio IMMUTABLE de `unaccent`) e índice GIN sobre `f_unaccent(lower(nombre completo))` | Recepción escribe sin tildes: "Maria Gomez" debe encontrar "María Gómez". Medido: 5–27 ms con 20.000 pacientes (índice usado) |
+| Auditoría de pacientes | — | Se guarda `patient_id` y **solo nombres de campos** modificados, jamás valores | La auditoría la leen más roles que la ficha; test de regresión sin datos personales |
+
+Tablas nuevas: `patients`, `clinical_histories`, `care_team` (índice único parcial: un doctor activo por paciente), `leads`, `lead_activities`.

@@ -72,6 +72,9 @@ class UserService:
     async def list_users(self, *, limit: int, offset: int) -> list[User]:
         return await self._users.list_users(limit=limit, offset=offset)
 
+    async def list_doctors(self) -> list[User]:
+        return await self._users.list_doctors()
+
     async def get_user(self, user_id: uuid.UUID) -> User:
         user = await self._users.get_by_id(user_id)
         if user is None:

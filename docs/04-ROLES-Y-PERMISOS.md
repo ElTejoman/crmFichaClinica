@@ -42,3 +42,13 @@
 - 2FA TOTP **obligatorio** para `SUPERUSER`, `OWNER`, `DOCTOR` (fase de hardening; en dev desactivable por variable).
 - Cierre de sesión por inactividad (15 min en vistas clínicas).
 - Cada decisión de autorización denegada se audita.
+
+
+## 5. Estado de implementación (Fase 2)
+Pacientes (datos administrativos) y CRM ya están aplicados en `domain/policies/permissions.py`:
+- `SUPERUSER`: lee pacientes y leads (datos administrativos); no gestiona.
+- `OWNER`: gestiona pacientes y leads, único con estadísticas (`leads:reports`).
+- `RECEPTION`: gestiona pacientes y leads; **sin** estadísticas ni contenido clínico.
+- `DOCTOR`: lee pacientes **de su cartera** (relación terapéutica) y leads **asignados**; no gestiona.
+- `PATIENT`: sin permisos de personal (el portal llega en la Fase 6).
+- Un usuario `OWNER`+`DOCTOR` ve toda la cartera (la visión completa prevalece).

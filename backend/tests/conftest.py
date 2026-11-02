@@ -8,7 +8,7 @@ import asyncio
 import os
 import subprocess
 import sys
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Awaitable, Callable
 from pathlib import Path
 
 import pytest
@@ -23,7 +23,9 @@ from sqlalchemy.ext.asyncio import (
 from sqlalchemy.pool import NullPool
 
 from app.core.config import Settings
+from app.domain.enums import Role
 from app.main import create_app
+from tests.helpers import create_user, login
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
 
@@ -73,6 +75,9 @@ async def engine(migrated_database: None) -> AsyncIterator[AsyncEngine]:
         await conn.execute(
             text("TRUNCATE users, refresh_tokens, audit_logs RESTART IDENTITY CASCADE")
         )
+        # La secuencia de HC no pertenece a una columna: se reinicia a mano para que los
+        # tests vean números correlativos desde 1.
+        await conn.execute(text("ALTER SEQUENCE hc_number_seq RESTART WITH 1"))
         await conn.execute(text("ALTER TABLE audit_logs ENABLE TRIGGER USER"))
     yield eng
     await eng.dispose()
@@ -91,3 +96,23 @@ async def client(settings: Settings, engine: AsyncEngine) -> AsyncIterator[Async
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as http:
             yield http
+
+
+@pytest.fixture
+def as_role(
+    client: AsyncClient, session_factory: async_sessionmaker[AsyncSession]
+) -> Callable[..., Awaitable[dict[str, str]]]:
+    """Devuelve `async (role, email=None) -> headers` creando el usuario si hace falta.
+
+    Cachea por correo: pedir dos veces el mismo usuario reutiliza la misma sesión.
+    """
+    cache: dict[str, dict[str, str]] = {}
+
+    async def _as(role: Role, email: str | None = None) -> dict[str, str]:
+        address = email or f"{role.value.lower()}@clinica-demo.pe"
+        if address not in cache:
+            await create_user(session_factory, address, [role])
+            cache[address] = await login(client, address)
+        return cache[address]
+
+    return _as

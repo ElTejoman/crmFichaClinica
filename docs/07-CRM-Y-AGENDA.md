@@ -23,3 +23,21 @@
 - **Flujo recepción**: confirmar → check-in → el paciente aparece en la cola del doctor.
 - **Recordatorios**: fase 2 (plantillas de WhatsApp/email). En fase 1 se genera lista de "citas de mañana" para llamar/enviar manualmente.
 - **Notas administrativas** de la cita **no** contienen datos clínicos (campo separado, visible a recepción).
+
+
+## 3. Implementado en Fase 2 (CRM) — comportamiento real
+- **Embudo**: `NEW ↔ CONTACTED ↔ QUALIFIED ↔ APPOINTMENT_SET` se mueven libremente (el Kanban permite arrastrar hacia atrás). `LOST` exige motivo y solo se reabre como `NEW`. `CONVERTED` **no se asigna a mano**: solo por la acción *Convertir en paciente*.
+- **Automatización**: registrar una llamada, WhatsApp o correo en un lead `NEW` lo pasa a `CONTACTED`; una nota no. Cada cambio de estado deja una actividad `STATUS_CHANGE`.
+- **Próxima acción**: cada actividad puede fijar la siguiente acción; la del lead es la de su **última** actividad (`null` la limpia). *Seguimientos de hoy* = próxima acción vencida o que vence hoy **en hora de Lima**, solo leads abiertos.
+- **Duplicados**: al crear un lead se compara teléfono/correo (normalizados) con leads **y** pacientes; devuelve 409 `possible_duplicate` con los candidatos y se puede forzar con `?allow_duplicate=true`.
+- **Conversión**: crea paciente + historia clínica y cierra el lead **en una sola transacción** (si cualquier paso falla, nada queda). La fuente del lead se conserva como `referral_source` del paciente. Un lead *perdido* también puede convertirse.
+- **Privacidad**: un DOCTOR solo ve los leads que se le asignaron; los leads no contienen datos clínicos.
+- **Estadísticas (solo OWNER)**: total, abiertos, convertidos, perdidos, tasa de conversión, y desgloses por estado, fuente, especialidad y motivo de pérdida.
+- **Pendiente**: "tiempo medio hasta la primera cita" (requiere agenda, Fase 3); importación CSV y formulario web.
+
+## 4. Implementado en Fase 2 (pacientes)
+- Alta con **historia clínica automática** y consentimiento de datos obligatorio; **menores de 18** exigen apoderado (se vuelve a verificar al editar la fecha de nacimiento).
+- Documentos: DNI (8 dígitos), CE, pasaporte y otro; únicos por (tipo, número). El formato del CE está **[VERIFICAR]**.
+- Teléfonos normalizados a `+51…` para detectar duplicados y usar WhatsApp.
+- **Duplicados probables**: mismo nombre aproximado (sin tildes) **y** misma fecha de nacimiento, o mismo teléfono. Homónimos con otra fecha de nacimiento no se marcan. Se muestra el documento enmascarado.
+- **Cartera del doctor**: un doctor solo ve pacientes con relación terapéutica activa; sin ella, 403 auditado. Dueño, recepción y superusuario ven todos.
