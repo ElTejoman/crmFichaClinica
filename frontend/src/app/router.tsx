@@ -58,6 +58,19 @@ export const router = createBrowserRouter([
             },
           },
           {
+            path: '/pacientes/:patientId/encuentros/:encounterId',
+            lazy: async () => {
+              const { EncounterPage } = await import('@/pages/EncounterPage')
+              return {
+                element: (
+                  <RoleGuard permission="clinical:read">
+                    <EncounterPage />
+                  </RoleGuard>
+                ),
+              }
+            },
+          },
+          {
             path: '/leads',
             lazy: async () => {
               const { LeadsPage } = await import('@/pages/LeadsPage')

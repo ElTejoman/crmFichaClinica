@@ -82,6 +82,38 @@ describe('can: agenda', () => {
   })
 })
 
+describe('can: clínico', () => {
+  it('leer contenido clínico: solo OWNER y DOCTOR', () => {
+    expect(can(['OWNER'], 'clinical:read')).toBe(true)
+    expect(can(['DOCTOR'], 'clinical:read')).toBe(true)
+    for (const role of ['SUPERUSER', 'RECEPTION', 'PATIENT'] as const) {
+      expect(can([role], 'clinical:read')).toBe(false)
+    }
+  })
+
+  it('escribir contenido clínico: solo el rol DOCTOR (el dueño-doctor lo hace por su rol DOCTOR)', () => {
+    expect(can(['DOCTOR'], 'clinical:write')).toBe(true)
+    expect(can(['OWNER', 'DOCTOR'], 'clinical:write')).toBe(true)
+    for (const role of ['OWNER', 'SUPERUSER', 'RECEPTION', 'PATIENT'] as const) {
+      expect(can([role], 'clinical:write')).toBe(false)
+    }
+  })
+
+  it('capturar consentimientos: OWNER, DOCTOR y RECEPTION; superusuario y paciente no', () => {
+    for (const role of ['OWNER', 'DOCTOR', 'RECEPTION'] as const) {
+      expect(can([role], 'consents:capture')).toBe(true)
+    }
+    expect(can(['SUPERUSER'], 'consents:capture')).toBe(false)
+    expect(can(['PATIENT'], 'consents:capture')).toBe(false)
+  })
+
+  it('recepción captura consentimientos pero jamás lee contenido clínico', () => {
+    expect(can(['RECEPTION'], 'consents:capture')).toBe(true)
+    expect(can(['RECEPTION'], 'clinical:read')).toBe(false)
+    expect(can(['RECEPTION'], 'clinical:write')).toBe(false)
+  })
+})
+
 describe('canAssignRole', () => {
   it('solo SUPERUSER asigna SUPERUSER u OWNER', () => {
     expect(canAssignRole(['OWNER'], 'OWNER')).toBe(false)

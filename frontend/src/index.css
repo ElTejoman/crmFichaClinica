@@ -15,3 +15,43 @@
 body {
   @apply bg-slate-50 text-slate-900 antialiased;
 }
+
+/* Impresión de un encuentro firmado: solo el documento, sin menús ni botones. */
+.print-only {
+  display: none;
+}
+
+@media print {
+  aside,
+  nav,
+  [data-no-print],
+  dialog,
+  [role='dialog'] {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block;
+  }
+
+  html,
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  /* El contenedor principal ocupa toda la hoja: sin el margen del marco de la app. */
+  main {
+    padding: 0 !important;
+  }
+
+  main,
+  main * {
+    box-shadow: none !important;
+  }
+
+  article,
+  section {
+    break-inside: avoid;
+  }
+}

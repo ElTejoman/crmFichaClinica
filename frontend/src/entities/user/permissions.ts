@@ -16,6 +16,9 @@ export type Permission =
   | 'agenda:manage'
   | 'agenda:attend'
   | 'schedule:manage'
+  | 'clinical:read'
+  | 'clinical:write'
+  | 'consents:capture'
 
 const PERMISSION_ROLES: Record<Permission, readonly Role[]> = {
   'users:manage': ['SUPERUSER', 'OWNER'],
@@ -31,6 +34,14 @@ const PERMISSION_ROLES: Record<Permission, readonly Role[]> = {
   'agenda:manage': ['OWNER', 'RECEPTION'],
   'agenda:attend': ['DOCTOR'],
   'schedule:manage': ['OWNER', 'RECEPTION'],
+  // Clínico (docs/04 §7). Leer contenido clínico: dueño y doctor (+ relación terapéutica, que valida el
+  // servidor). Escribir: solo el rol DOCTOR; el dueño-doctor escribe por su rol DOCTOR. SUPERUSER,
+  // RECEPTION y PATIENT nunca ven contenido clínico.
+  'clinical:read': ['OWNER', 'DOCTOR'],
+  'clinical:write': ['DOCTOR'],
+  // Capturar/listar/revocar consentimientos es admisión: recepción sí. Ver la IMAGEN de la firma
+  // exige 'clinical:read' (lo impone el servidor).
+  'consents:capture': ['OWNER', 'DOCTOR', 'RECEPTION'],
 }
 
 /** ¿Alguno de los roles del usuario concede el permiso? (usuario con múltiples roles = unión). */

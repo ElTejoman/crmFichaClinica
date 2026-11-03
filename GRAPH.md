@@ -14,7 +14,7 @@ crmFichaClinica/
 │  ├─ app/{main.py, core/, domain/{policies/, specialties/}, models/, repositories/, services/, schemas/, api/{deps.py, v1/}}
 │  ├─ alembic/  tests/{unit,integration,architecture}  scripts/{seed.py, verify_audit_chain.py}
 │  └─ pyproject.toml ✅  Dockerfile ✅  alembic/versions/{0001 extensiones, 0002 identidad+auditoría, 0003 pacientes+CRM, 0004 agenda, 0005 núcleo clínico} ✅
-└─ frontend/ ✅ (Fases 0-3: shell, auth, users, audit, patients, leads, agenda; resto ⬜)
+└─ frontend/ ✅ (Fases 0-4: shell, auth, users, audit, patients, leads, agenda, núcleo clínico; resto ⬜)
    ├─ src/{app/, shared/, entities/, features/{auth,patients,leads,agenda,dashboard,clinical-record/{core,specialties/*}}, pages/}
    └─ package.json  vite.config.ts  tsconfig.json  Dockerfile
 ```
@@ -126,7 +126,7 @@ Rutas nuevas: `/pacientes` · `/pacientes/nuevo` · `/pacientes/:id` · `/leads`
 | `frontend/shared` | `lib/dates` (utilidades de Lima), `ui/Dialog` mejorado |
 Rutas nuevas: `/agenda` · `/agenda/hoy` · `/agenda/nueva` · `/agenda/configuracion` · `/mi-agenda`.
 
-## 9. Fase 4 — componentes implementados (backend; frontend en curso)
+## 9. Fase 4 — componentes implementados
 | Capa | Módulos |
 |---|---|
 | `domain` | `clinical_rules` (vitales, CIE-10, checklist de firma, hash canónico, adjuntos, consentimientos requeridos), `specialties/{base, registry}` (contrato `SpecialtyModule`, registro vacío hasta la Fase 5), permisos `clinical:read` / `clinical:write` / `consents:capture` |
@@ -137,5 +137,7 @@ Rutas nuevas: `/agenda` · `/agenda/hoy` · `/agenda/nueva` · `/agenda/configur
 | `alembic` | `0005_clinical_core` (tablas + 10 triggers de inmutabilidad + plantillas y CIE-10 de ejemplo) |
 | `scripts` | `seed_clinical.py` (consentimiento general, alergias, medicación), `dev/mutation_check.py` |
 
+**Frontend**: `features/clinical-record/core/{api, components, hooks}` (historia, línea de tiempo, editor con autoguardado, CIE-10, firma/adenda/integridad, consentimientos con canvas, adjuntos, impresión), `pages/EncounterPage`, pestañas inyectadas en `PatientDetail` y botón en `MyAgendaView` por props, `shared/lib/http` con `apiUpload`/`apiDownload`. Ruta nueva: `/pacientes/:patientId/encuentros/:encounterId`.
+
 ## 10. Estado
-Ver `LOGS.md`. Hoy: Fases 0, 1, 2 y 3 completas; Fase 4 con backend completo y frontend en curso.
+Ver `LOGS.md`. Hoy: Fases 0, 1, 2 y 3 completas; Fase 4 completa (backend + frontend).

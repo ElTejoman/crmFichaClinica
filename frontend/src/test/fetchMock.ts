@@ -11,6 +11,8 @@ export interface RecordedCall {
   method: string
   url: string
   body: unknown
+  /** Cuerpo multipart (subida de archivos), si lo hubo. */
+  formData?: FormData
 }
 
 type Handler = (call: RecordedCall) => Response | undefined
@@ -26,6 +28,7 @@ export function installFetch(...handlers: Handler[]) {
       method: init?.method ?? 'GET',
       url: String(input),
       body: typeof init?.body === 'string' ? (JSON.parse(init.body) as unknown) : undefined,
+      ...(init?.body instanceof FormData ? { formData: init.body } : {}),
     }
     calls.push(call)
     for (const handler of handlers) {

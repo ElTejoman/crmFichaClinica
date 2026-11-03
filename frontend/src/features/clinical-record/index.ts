@@ -1,0 +1,6 @@
+export { ClinicalHistoryTab } from './core/components/ClinicalHistoryTab'
+export { ConsentsPanel } from './core/components/ConsentsPanel'
+export { AttachmentsPanel } from './core/components/AttachmentsPanel'
+export { EncounterWorkspace } from './core/components/EncounterWorkspace'
+export { StartEncounterButton } from './core/components/StartEncounterButton'
+export { patientTabPath, type PatientTabId } from './core/paths'

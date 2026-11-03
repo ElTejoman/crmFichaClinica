@@ -21,6 +21,10 @@ export interface RequestOptions {
   signal?: AbortSignal
   /** Cuerpo JSON (POST/PATCH). */
   body?: unknown
+  /** Cuerpo multipart (subida de archivos). El navegador fija el `Content-Type` con su boundary. */
+  formData?: FormData
+  /** `Accept` de la petición; por defecto JSON (las descargas piden cualquier tipo). */
+  accept?: string
   /** Sin Bearer ni reintento por 401: login/refresh/logout (un 401 ahí es la respuesta, no sesión caducada). */
   skipAuth?: boolean
   /** Estados no-2xx que se devuelven como éxito (p. ej. `/ready` responde 503 con JSON válido). */
@@ -72,15 +76,19 @@ export function refreshAccessToken(): Promise<string | null> {
 /* ---------- Peticiones ---------- */
 
 async function send(method: Method, path: string, options: RequestOptions, token: string | null) {
-  const headers: Record<string, string> = { Accept: 'application/json' }
-  if (options.body !== undefined) headers['Content-Type'] = 'application/json'
+  const headers: Record<string, string> = { Accept: options.accept ?? 'application/json' }
+  // Con multipart NO se fija Content-Type: sin el boundary que añade el navegador el servidor no lo lee.
+  if (options.body !== undefined && options.formData === undefined) {
+    headers['Content-Type'] = 'application/json'
+  }
   if (token && !options.skipAuth) headers.Authorization = `Bearer ${token}`
   try {
     return await fetch(`${API_PREFIX}${path}`, {
       method,
       credentials: 'include',
       headers,
-      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+      body:
+        options.formData ?? (options.body === undefined ? undefined : JSON.stringify(options.body)),
       signal: options.signal,
     })
   } catch (error) {
@@ -130,6 +138,28 @@ export function apiPost<T>(path: string, body?: unknown, options?: RequestOption
 
 export function apiPatch<T>(path: string, body: unknown, options?: RequestOptions): Promise<T> {
   return apiRequest<T>('PATCH', path, { ...options, body })
+}
+
+/** Sube un archivo (multipart) con el mismo Bearer y la misma renovación de sesión que el resto. */
+export function apiUpload<T>(
+  path: string,
+  formData: FormData,
+  options?: RequestOptions,
+): Promise<T> {
+  return apiRequest<T>('POST', path, { ...options, formData })
+}
+
+/**
+ * Descarga binaria autenticada: el endpoint exige Bearer, así que un `<a href>` directo no
+ * serviría. Devuelve el `Blob`; quien lo use debe revocar la URL temporal que cree.
+ */
+export async function apiDownload(path: string, options: RequestOptions = {}): Promise<Blob> {
+  const response = await sendWithRefresh('GET', path, { ...options, accept: '*/*' })
+  if (!response.ok) {
+    const body: unknown = await response.json().catch(() => null)
+    throw toApiError(response.status, body, response.statusText)
+  }
+  return response.blob()
 }
 
 export function apiDelete(path: string, options?: RequestOptions): Promise<void> {

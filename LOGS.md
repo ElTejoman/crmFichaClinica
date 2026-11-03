@@ -11,14 +11,14 @@
 | 1 · Identidad y seguridad | ✅ |
 | 2 · Pacientes + CRM | ✅ |
 | 3 · Agenda | ✅ |
-| 4 · Núcleo clínico | 🟨 backend ✅ · frontend ⬜ |
+| 4 · Núcleo clínico | ✅ |
 | 5a Nutrición · 5b Acupuntura · 5c Quiropraxia · 5d Sueroterapia · 5e Odontología | ⬜ |
 | 6 · Tablero dueño + portal paciente | ⬜ |
 | 7 · Hardening y entrega | ⬜ |
 
 ---
 
-## 2026-11-03 · Fase 4 — Núcleo clínico 🟨 (backend ✅ · frontend en curso)
+## 2026-11-03 · Fase 4 — Núcleo clínico ✅
 **Hecho (backend)** — detalle en `docs/03 §7`, `docs/04 §7`, `docs/05`, `docs/06 §11`, `docs/07 §5`.
 - Historia clínica: resumen (alertas primero), alergias, medicación y antecedentes (sin borrado físico), búsqueda CIE-10 sin tildes y tolerante a erratas (catálogo de **112 códigos de ejemplo**).
 - Encuentros: borrador → **checklist de firma** (única fuente de verdad) → firma (hash SHA-256 canónico, firmante y colegiatura congelados, completa la cita) → **adendas** (estado `AMENDED`, el contenido firmado no cambia) → verificación de integridad. Línea de tiempo que oculta borradores ajenos.
@@ -26,6 +26,14 @@
 - Adjuntos: lista blanca, verificación de bytes reales, 10 MB, nombre aleatorio en disco, descarga como `attachment` + `nosniff`, fotos con consentimiento.
 - Contrato `SpecialtyModule` + registro (vacío hasta la Fase 5) probado con un módulo falso.
 - Inmutabilidad también en **PostgreSQL** (10 triggers; migración `0005` con ciclo upgrade → check → downgrade → upgrade verificado). Seed clínico idempotente (`seed_clinical.py`).
+
+**Hecho (frontend, subagente `frontend-dev`, reverificado por el agente principal)**
+- `features/clinical-record/core`: pestañas de la ficha del paciente según permiso (Historia clínica y Adjuntos con `clinical:read`; Consentimientos con `consents:capture`), banner de alertas, alergias/medicación/antecedentes sin borrado, línea de tiempo paginada, editor de encuentro con **autoguardado por grupos** (notas, vitales, diagnósticos), combobox CIE-10 accesible, panel de checklist de firma, firma con confirmación de inmutabilidad, vista de solo lectura, adendas, verificación de integridad, vista imprimible (`@media print`), consentimientos con firma en canvas (Pointer Events) y alternativas no gráficas, adjuntos con descarga por Blob autenticado. Ruta `/pacientes/:patientId/encuentros/:encounterId` con guard `clinical:read`; "Iniciar atención" desde Mi agenda. `patients` y `agenda` reciben las piezas clínicas por props (sin importar entre features).
+
+**Verificación frontend (ejecutada por mí)**
+- oxlint ✅ · tsc ✅ · prettier ✅ · **vitest 438 passed (75 archivos; antes 294)** · build ✅. Igual con `TZ=UTC`, `America/Los_Angeles` y `Asia/Tokyo` (438/438 cada una). Sin `any`, `@ts-ignore`, `console.*`, `localStorage`/`sessionStorage`, `dangerouslySetInnerHTML` en código de producción; sin procesos huérfanos.
+- Mutación propia: Firmar siempre habilitado → 4 tests fallan. El subagente hizo 16 mutaciones (una sobrevivió, añadió 2 tests y la mató).
+- E2E del subagente en Chromium (29/29): consentimiento con firma dibujada, alergia grave y banner, encuentro completo (autoguardado, IMC del servidor, CIE-10 por teclado, firma, adenda, integridad, impresión), subida/descarga de PDF y rechazos, menor con apoderado, verbal rechazado en sueroterapia, revocación, recepción sin acceso clínico, doctor sin relación con 403 claro, 820 px sin scroll horizontal. **No lo repetí yo.**
 
 **Verificación (evidencia, ejecutada por el agente principal)**
 - ruff ✅ · mypy --strict ✅ (121 archivos) · alembic check ✅ · **pytest 608 passed, 1 skipped** (PostgreSQL 16 real, ~3 min). 212 tests nuevos de la fase (unitarios de reglas + 4 archivos de integración).
@@ -40,10 +48,15 @@
 - Mis tests usaban valores de enum inexistentes (`CHRONIC`, `LAB_RESULT`) → lección en CLAUDE.md. Un heredoc sin comillas corrompió CLAUDE.md y un `ruff format` suelto alteró `docs/02` → restaurados; lección registrada.
 
 **NO verificado / pendiente**
-- **Frontend de la Fase 4 aún no existe** (esta entrada se completa al terminarlo).
+- Frontend: "Iniciar atención" desde Mi agenda solo probado con tests (no en navegador); impresión real y lectores de pantalla no probados; Docker/nginx sin probar. No hay módulos de especialidad (Fase 5).
+- El PATCH de encuentros **reemplaza** la lista completa de vitales/diagnósticos y `history_reviewed=true` re-estampa la hora cada vez que se envía (el frontend manda solo claves cambiadas): tenerlo presente en la Fase 5.
+- La BD de desarrollo contiene datos E2E no borrables por diseño (2 pacientes "E2E" con encuentros firmados, alergias duplicadas y consentimientos).
+- **Push a GitHub bloqueado (403)**: 12 commits locales sin subir.
 - Catálogo CIE-10 oficial completo y su licencia **[VERIFICAR]**. Textos de consentimiento: ejemplos, requieren revisión legal. Firma digital con valor legal **[VERIFICAR]** (el hash es una huella de integridad, no una firma legal). Retención de 20 años **[VERIFICAR]**.
 - Adjuntos sin cifrado en reposo ni antivirus (solo disco local de desarrollo). `docker compose` sin validar (sin daemon).
 - Todavía sin *break-glass*, permiso del paciente para información sensible, portal del paciente ni exportación PDF.
+
+**Siguiente paso**: Fase 5 — módulos de especialidad (empezar por nutrición o acupuntura) con el contrato `SpecialtyModule`; antes, validar el núcleo con un doctor real.
 
 ---
 

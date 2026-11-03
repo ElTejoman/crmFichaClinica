@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useState, type ReactNode } from 'react'
+import { Link, useLocation, useSearchParams } from 'react-router-dom'
 
 import {
   patientToFormValues,
@@ -10,7 +10,8 @@ import {
 import { PatientAppointments } from '@/entities/appointment'
 import { readFlash } from '@/shared/lib/flash'
 import { ApiError } from '@/shared/lib/http'
-import { Alert, Badge, Button, Dialog, Spinner } from '@/shared/ui'
+import type { PatientRead } from '@/shared/types/aliases'
+import { Alert, Badge, Button, Dialog, Spinner, Tabs } from '@/shared/ui'
 
 import { usePatient, useUpdatePatient } from '../api/usePatients'
 import { CareTeamPanel } from './CareTeamPanel'
@@ -43,12 +44,26 @@ function LoadError({ error }: { error: unknown }) {
   )
 }
 
+/**
+ * Pestaña adicional que otra parte de la app inyecta en la ficha (p. ej. la historia clínica).
+ * La ficha administrativa no importa features clínicas: la página las compone y las pasa aquí.
+ */
+export interface PatientExtraTab {
+  id: string
+  label: string
+  render: (patient: PatientRead, goToTab: (id: string) => void) => ReactNode
+}
+
+const ADMIN_TAB_ID = 'datos'
+const TAB_PARAM = 'tab'
+
 /** Ficha administrativa del paciente: datos, edición, archivado y equipo tratante. */
 export function PatientDetail({
   patientId,
   canManage,
   canViewAppointments = false,
   canSchedule = false,
+  extraTabs = [],
 }: {
   patientId: string
   canManage: boolean
@@ -56,11 +71,14 @@ export function PatientDetail({
   canViewAppointments?: boolean
   /** AGENDA_MANAGE: muestra «Agendar cita». */
   canSchedule?: boolean
+  /** Pestañas que se suman a «Datos» (la pestaña activa viaja en `?tab=`; no contiene datos personales). */
+  extraTabs?: readonly PatientExtraTab[]
 }) {
   const patient = usePatient(patientId)
   const update = useUpdatePatient(patientId)
   const location = useLocation()
   const flash = readFlash(location.state)
+  const [searchParams, setSearchParams] = useSearchParams()
   const [editing, setEditing] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [confirmArchive, setConfirmArchive] = useState(false)
@@ -101,6 +119,38 @@ export function PatientDetail({
       },
     )
   }
+
+  const requestedTab = searchParams.get(TAB_PARAM)
+  const activeExtra = extraTabs.find((tab) => tab.id === requestedTab)
+  const activeTab = activeExtra ? activeExtra.id : ADMIN_TAB_ID
+
+  function goToTab(id: string) {
+    setSearchParams(id === ADMIN_TAB_ID ? {} : { [TAB_PARAM]: id }, { replace: true })
+  }
+
+  const adminContent = (
+    <div className="flex flex-col gap-5">
+      <Alert tone="info">
+        Aquí solo se muestran datos administrativos. El contenido clínico lo ve únicamente el
+        personal autorizado, en la pestaña de historia clínica.
+      </Alert>
+      {editing ? (
+        <PatientForm
+          mode="edit"
+          ariaLabel="Editar paciente"
+          initialValues={patientToFormValues(data)}
+          submitLabel="Guardar cambios"
+          onSubmit={save}
+          onCancel={() => setEditing(false)}
+        />
+      ) : (
+        <PatientDataView patient={data} />
+      )}
+
+      {canViewAppointments && <PatientAppointments patientId={patientId} />}
+      {canManage && <CareTeamPanel patientId={patientId} />}
+    </div>
+  )
 
   return (
     <div className="flex flex-col gap-5">
@@ -143,6 +193,7 @@ export function PatientDetail({
                   onClick={() => {
                     setMessage(null)
                     setEditing(true)
+                    goToTab(ADMIN_TAB_ID)
                   }}
                 >
                   Editar
@@ -166,29 +217,25 @@ export function PatientDetail({
         )}
       </header>
 
-      <Alert tone="info">
-        Aquí solo se muestran datos administrativos. La ficha clínica estará disponible en una fase
-        posterior.
-      </Alert>
       {flash && <Alert tone="success">{flash}</Alert>}
       {message && <Alert tone="success">{message}</Alert>}
       {archiveError && <Alert tone="error">{archiveError}</Alert>}
 
-      {editing ? (
-        <PatientForm
-          mode="edit"
-          ariaLabel="Editar paciente"
-          initialValues={patientToFormValues(data)}
-          submitLabel="Guardar cambios"
-          onSubmit={save}
-          onCancel={() => setEditing(false)}
-        />
+      {extraTabs.length === 0 ? (
+        adminContent
       ) : (
-        <PatientDataView patient={data} />
+        <Tabs
+          label="Secciones de la ficha del paciente"
+          tabs={[
+            { id: ADMIN_TAB_ID, label: 'Datos' },
+            ...extraTabs.map((tab) => ({ id: tab.id, label: tab.label })),
+          ]}
+          value={activeTab}
+          onChange={goToTab}
+        >
+          {activeExtra ? activeExtra.render(data, goToTab) : adminContent}
+        </Tabs>
       )}
-
-      {canViewAppointments && <PatientAppointments patientId={patientId} />}
-      {canManage && <CareTeamPanel patientId={patientId} />}
 
       <Dialog
         open={confirmArchive}

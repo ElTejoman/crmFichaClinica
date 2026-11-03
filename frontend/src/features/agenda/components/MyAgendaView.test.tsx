@@ -63,6 +63,37 @@ describe('MyAgendaView', () => {
     await user.click(within(rosa).getByRole('button', { name: /Iniciar atención: Rosa Quispe/ }))
     expect(await screen.findByText(/Atención de Rosa Quispe iniciada/)).toBeInTheDocument()
     expect(calls.some((c) => c.url === '/api/appointments/q-1/start')).toBe(true)
-    expect(screen.getByText(/ficha clínica estará disponible en una fase/)).toBeInTheDocument()
+    expect(screen.getByText(/lleva a su ficha administrativa/)).toBeInTheDocument()
+  })
+
+  it('con la ficha clínica inyectada, «Iniciar atención» abre el encuentro y reemplaza al inicio simple', async () => {
+    const today = todayLimaKey()
+    const start = limaInstant(today, '09:00').toISOString()
+    const doctor = makeUser(['DOCTOR'], { id: 'd-1' })
+    const waiting = makeAppointment({
+      id: 'q-1',
+      patient_name: 'Rosa Quispe',
+      status: 'CHECKED_IN',
+      checked_in_at: start,
+      starts_at: start,
+      ends_at: limaInstant(today, '09:30').toISOString(),
+    })
+    installFetch((c) =>
+      c.url.startsWith('/api/appointments?') ? jsonResponse(200, [waiting]) : undefined,
+    )
+    renderWithAuth(
+      <MyAgendaView
+        user={doctor}
+        renderClinicalAction={(a) => <button type="button">Abrir ficha de {a.patient_name}</button>}
+      />,
+      doctor,
+    )
+    expect(
+      await screen.findByRole('button', { name: 'Abrir ficha de Rosa Quispe' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /Iniciar atención: Rosa Quispe/ }),
+    ).not.toBeInTheDocument()
+    expect(screen.getByText(/abre la ficha clínica del encuentro/)).toBeInTheDocument()
   })
 })

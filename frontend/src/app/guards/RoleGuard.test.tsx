@@ -23,3 +23,21 @@ describe('RoleGuard', () => {
     expect(screen.getByText('Panel de usuarios')).toBeInTheDocument()
   })
 })
+
+describe('RoleGuard: contenido clínico', () => {
+  const clinical = <RoleGuard permission="clinical:read">Encuentro clínico</RoleGuard>
+
+  it('doctor y dueño entran; recepción y superusuario ven 403 (nunca el contenido clínico)', () => {
+    const { unmount } = renderWithAuth(clinical, makeUser(['DOCTOR']))
+    expect(screen.getByText('Encuentro clínico')).toBeInTheDocument()
+    unmount()
+    for (const role of ['RECEPTION', 'SUPERUSER', 'PATIENT'] as const) {
+      const view = renderWithAuth(clinical, makeUser([role]))
+      expect(screen.queryByText('Encuentro clínico')).not.toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Acceso denegado' })).toBeInTheDocument()
+      view.unmount()
+    }
+    renderWithAuth(clinical, makeUser(['OWNER']))
+    expect(screen.getByText('Encuentro clínico')).toBeInTheDocument()
+  })
+})

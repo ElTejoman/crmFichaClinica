@@ -2,8 +2,10 @@ import { clearAccessToken, getAccessToken, setAccessToken } from './accessToken'
 import {
   ApiError,
   apiDelete,
+  apiDownload,
   apiGet,
   apiPost,
+  apiUpload,
   refreshAccessToken,
   setSessionExpiredHandler,
 } from './http'
@@ -174,5 +176,62 @@ describe('cliente HTTP', () => {
     const [url, init] = fetchMock.mock.calls[0] ?? []
     expect(url).toBe('/api/patients/p1/care-team/d1')
     expect((init as RequestInit).method).toBe('DELETE')
+  })
+})
+
+describe('cliente HTTP: archivos', () => {
+  it('apiUpload envía multipart SIN Content-Type (lo fija el navegador) y con Bearer', async () => {
+    setAccessToken('tok-1')
+    const fetchMock = mockFetch(() => json(201, { id: 'a-1' }))
+    const form = new FormData()
+    form.append('kind', 'LAB')
+    await expect(apiUpload('/patients/p1/attachments', form)).resolves.toEqual({ id: 'a-1' })
+    const [url, init] = fetchMock.mock.calls[0] ?? []
+    const request = init as RequestInit
+    expect(url).toBe('/api/patients/p1/attachments')
+    expect(request.method).toBe('POST')
+    expect(request.body).toBe(form)
+    expect((request.headers as Record<string, string>)['Content-Type']).toBeUndefined()
+    expect(bearer(request)).toBe('Bearer tok-1')
+  })
+
+  it('apiUpload reintenta tras renovar la sesión reenviando el mismo formulario', async () => {
+    setAccessToken('viejo')
+    const form = new FormData()
+    form.append('kind', 'LAB')
+    const fetchMock = mockFetch((url, init) => {
+      if (url === '/api/auth/refresh') return json(200, tokenBody('nuevo'))
+      return bearer(init) === 'Bearer nuevo'
+        ? json(201, { ok: true })
+        : json(401, { error: { code: 'not_authenticated', message: 'No autenticado' } })
+    })
+    await expect(apiUpload('/patients/p1/attachments', form)).resolves.toEqual({ ok: true })
+    expect(fetchMock).toHaveBeenCalledTimes(3)
+  })
+
+  it('apiDownload devuelve el Blob con Bearer y sin pedir JSON', async () => {
+    setAccessToken('tok-1')
+    const fetchMock = mockFetch(
+      () =>
+        new Response('%PDF-1.4', { status: 200, headers: { 'Content-Type': 'application/pdf' } }),
+    )
+    const blob = await apiDownload('/attachments/a-1/download')
+    expect(blob.type).toBe('application/pdf')
+    expect(await blob.text()).toBe('%PDF-1.4')
+    const init = fetchMock.mock.calls[0]?.[1] as RequestInit
+    expect(bearer(init)).toBe('Bearer tok-1')
+    expect((init.headers as Record<string, string>).Accept).toBe('*/*')
+  })
+
+  it('apiDownload traduce el error JSON del servidor a ApiError', async () => {
+    mockFetch(() =>
+      json(404, {
+        error: { code: 'attachment_file_missing', message: 'El archivo no está disponible' },
+      }),
+    )
+    await expect(apiDownload('/attachments/a-1/download')).rejects.toMatchObject({
+      status: 404,
+      code: 'attachment_file_missing',
+    })
   })
 })

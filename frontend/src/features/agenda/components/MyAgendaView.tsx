@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
 import { AppointmentStatusBadge, useDayAppointments } from '@/entities/appointment'
@@ -23,6 +23,9 @@ const REFRESH_MS = 30_000
 const LINK =
   'font-medium text-brand-700 underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700'
 
+/** Acción clínica que otra parte de la app inyecta en la cita (la agenda no importa features clínicas). */
+type ClinicalActionRenderer = (appointment: AppointmentRead) => ReactNode
+
 function AppointmentCard({
   appointment,
   highlight,
@@ -30,6 +33,7 @@ function AppointmentCard({
   onSelect,
   onAct,
   pendingId,
+  renderClinicalAction,
 }: {
   appointment: AppointmentRead
   highlight?: boolean
@@ -37,9 +41,13 @@ function AppointmentCard({
   onSelect: (a: AppointmentRead) => void
   onAct: (a: AppointmentRead, action: AppointmentAction) => void
   pendingId: string | null
+  renderClinicalAction?: ClinicalActionRenderer | undefined
 }) {
+  // Con ficha clínica disponible, «Iniciar atención» ES abrir el encuentro (que además pasa la
+  // cita a «en atención»): el botón de iniciar a secas se oculta para no ofrecer dos caminos.
+  const clinicalAction = renderClinicalAction?.(appointment)
   const actions = availableActions(appointment, { id: user.id, roles: user.roles }).filter(
-    (a) => a === 'start' || a === 'complete',
+    (a) => (a === 'start' && !clinicalAction) || a === 'complete',
   )
   return (
     <li
@@ -71,6 +79,7 @@ function AppointmentCard({
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <AppointmentStatusBadge status={appointment.status} />
+        {clinicalAction}
         {actions.map((action) => (
           <Button
             key={action}
@@ -88,7 +97,17 @@ function AppointmentCard({
 }
 
 /** «Mi agenda»: las citas de hoy del doctor, con la cola de espera (ya llegaron) al frente. */
-export function MyAgendaView({ user }: { user: UserRead }) {
+export function MyAgendaView({
+  user,
+  renderClinicalAction,
+}: {
+  user: UserRead
+  /**
+   * Devuelve el botón para abrir la ficha clínica de una cita (o null si no corresponde).
+   * Lo aporta la página: así la agenda no depende de la feature clínica.
+   */
+  renderClinicalAction?: ClinicalActionRenderer
+}) {
   const now = useNow()
   const todayKey = todayLimaKey(now)
   // La cola cambia desde recepción (check-in): se refresca sola cada 30 s.
@@ -124,8 +143,10 @@ export function MyAgendaView({ user }: { user: UserRead }) {
         </p>
       </div>
       <Alert tone="info">
-        Desde aquí se atiende la cola del día. La ficha clínica estará disponible en una fase
-        posterior; por ahora el enlace lleva a la ficha administrativa del paciente.
+        Desde aquí se atiende la cola del día.
+        {renderClinicalAction
+          ? ' «Iniciar atención» abre la ficha clínica del encuentro.'
+          : ' El enlace de cada paciente lleva a su ficha administrativa.'}
       </Alert>
       <div aria-live="polite" className="empty:hidden">
         {message && <Alert tone="success">{message}</Alert>}
@@ -157,6 +178,7 @@ export function MyAgendaView({ user }: { user: UserRead }) {
                 onSelect={setSelected}
                 onAct={onAct}
                 pendingId={pendingId}
+                renderClinicalAction={renderClinicalAction}
               />
             ))}
           </ul>
@@ -183,6 +205,7 @@ export function MyAgendaView({ user }: { user: UserRead }) {
                   onSelect={setSelected}
                   onAct={onAct}
                   pendingId={pendingId}
+                  renderClinicalAction={renderClinicalAction}
                 />
               ))}
             </ul>
@@ -204,6 +227,7 @@ export function MyAgendaView({ user }: { user: UserRead }) {
                 onSelect={setSelected}
                 onAct={onAct}
                 pendingId={pendingId}
+                renderClinicalAction={renderClinicalAction}
               />
             ))}
           </ul>
