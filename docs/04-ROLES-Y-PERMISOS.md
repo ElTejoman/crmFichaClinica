@@ -60,3 +60,13 @@ Nuevos permisos en `domain/policies/permissions.py`:
 - `agenda:attend` — DOCTOR: iniciar y completar **sus** citas (si no es el doctor de la cita → 403 auditado; recepción nunca atiende).
 - `schedule:manage` — OWNER, RECEPTION: horarios, excepciones, salas y tipos de cita (el SUPERUSER solo lee).
 Un usuario OWNER+DOCTOR ve todo el calendario y puede atender solo las citas donde él es el doctor.
+
+## 7. Estado de implementación (Fase 4: núcleo clínico)
+Nuevos permisos en `domain/policies/permissions.py`:
+- `clinical:read` — OWNER y DOCTOR. **Además** exige relación terapéutica activa (el OWNER no la necesita). SUPERUSER, RECEPTION y PATIENT: nunca.
+- `clinical:write` — solo DOCTOR (un OWNER que también sea DOCTOR escribe como doctor). Exige: especialidad que el doctor ofrece, relación terapéutica activa y paciente activo. Cada denegación queda auditada con el motivo.
+- `consents:capture` — OWNER, DOCTOR y RECEPTION (capturar firma en admisión y revocar). Ver la **imagen** de la firma es acceso clínico (`clinical:read` + relación).
+- **Borradores**: solo su autor los ve y edita; ni siquiera el dueño ni otro doctor con relación leen un borrador ajeno.
+- **Firmados**: solo el autor añade adendas. La regla "OWNER con motivo" del §3.6 **no se implementó** (decisión: más estricto hasta validar con la clínica).
+- Terminar la relación terapéutica retira el acceso al contenido clínico de inmediato.
+- **Pendiente**: *break-glass* (Fase 6), permiso explícito del paciente para información sensible (RENHICE) y portal del paciente.

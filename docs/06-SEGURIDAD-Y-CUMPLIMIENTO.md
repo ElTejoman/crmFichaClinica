@@ -110,3 +110,12 @@ row_hash = SHA256( prev_hash || ts || actor || action || resource || patient || 
 - "Completar" una cita es manual por ahora; en la Fase 4 ocurrirá al **firmar** el encuentro clínico.
 - El listado del calendario no se audita fila por fila (solo la lectura individual), igual que pacientes.
 - No hay recordatorios automáticos (WhatsApp/email): solo una lista para contactar a mano.
+
+## 11. Implementado en Fase 4 (estado real)
+- **Auditoría clínica**: toda lectura y escritura (resumen, alergias, medicación, antecedentes, encuentros, consentimientos, firmas, adjuntos) registra actor, acción, recurso y `patient_id`. El motivo solo contiene códigos (`tipo=…`, `campos=…`), **nunca** texto clínico, nombres ni nombres de archivo (probado leyendo toda la tabla de auditoría).
+- **Inmutabilidad en dos capas**: servicio (409 `encounter_not_editable`) y triggers de PostgreSQL (aunque alguien salte la API). Probado: UPDATE/DELETE directos sobre encuentros firmados, vitales, diagnósticos y adendas fallan.
+- **Integridad**: `GET /encounters/{id}/integrity` recalcula el SHA-256 y lo compara con el guardado; se probó que detecta una alteración hecha desactivando el trigger. Es una **huella de integridad, no una firma digital con valor legal** **[VERIFICAR]** requisitos de firma digital/electrónica de HC en Perú.
+- **Adjuntos**: lista blanca (PDF, PNG, JPEG, WEBP), verificación de los **bytes reales** (un ejecutable renombrado se rechaza), máx. 10 MB, nombre aleatorio en disco (el nombre original solo se muestra, saneado), descarga siempre como `attachment` con `nosniff` y `no-store`, las fotos exigen consentimiento. Si la fila existe pero el archivo no, el error es controlado (404 `attachment_file_missing`) y se registra para operaciones.
+- **Consentimientos**: el verbal solo vale para atención general y fotos; menores firman con apoderado; la revocación bloquea la firma de nuevos encuentros; nunca se borran. **Textos de ejemplo, no legales.**
+- **Bug de seguridad hallado por las pruebas**: `GET /consents/{id}/signature` exigía el permiso clínico pero **no** la relación terapéutica (cualquier doctor podía ver la firma de cualquier paciente). Corregido y cubierto por un test (verificado con mutación).
+- **Pendiente**: retención de 20 años **[VERIFICAR]**, cifrado en reposo de adjuntos, antivirus, límites de tasa de subida, exportación PDF de la HC, y revisión legal de los textos de consentimiento.

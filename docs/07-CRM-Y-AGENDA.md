@@ -51,4 +51,5 @@
 - **Series**: N sesiones (2-20) a la **misma hora local** cada N días; todo o nada, con el detalle de cada sesión problemática.
 - **Disponibilidad**: huecos libres por doctor o especialidad (máx. 14 días), alineados al intervalo del bloque, descontando citas, excepciones y el pasado; todo hueco ofrecido es agendable (probado).
 - **Relación terapéutica automática** al agendar.
-- **Pendiente**: recordatorios automáticos, "tiempo medio hasta la primera cita" en las estadísticas del CRM, y completar la cita desde la firma del encuentro (Fase 4).
+- **Fase 4**: abrir un encuentro desde una cita en `CHECKED_IN` la pasa a `IN_PROGRESS`; **firmar el encuentro la completa** (`COMPLETED`). Un encuentro por cita (índice único).
+- **Pendiente**: recordatorios automáticos y "tiempo medio hasta la primera cita" en las estadísticas del CRM.

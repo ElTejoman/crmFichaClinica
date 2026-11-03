@@ -13,7 +13,7 @@ crmFichaClinica/
 ├─ backend/ ✅ (Fase 0: core, health, tests de arquitectura; resto ⬜)
 │  ├─ app/{main.py, core/, domain/{policies/, specialties/}, models/, repositories/, services/, schemas/, api/{deps.py, v1/}}
 │  ├─ alembic/  tests/{unit,integration,architecture}  scripts/{seed.py, verify_audit_chain.py}
-│  └─ pyproject.toml ✅  Dockerfile ✅  alembic/versions/{0001 extensiones, 0002 identidad+auditoría, 0003 pacientes+CRM, 0004 agenda} ✅
+│  └─ pyproject.toml ✅  Dockerfile ✅  alembic/versions/{0001 extensiones, 0002 identidad+auditoría, 0003 pacientes+CRM, 0004 agenda, 0005 núcleo clínico} ✅
 └─ frontend/ ✅ (Fases 0-3: shell, auth, users, audit, patients, leads, agenda; resto ⬜)
    ├─ src/{app/, shared/, entities/, features/{auth,patients,leads,agenda,dashboard,clinical-record/{core,specialties/*}}, pages/}
    └─ package.json  vite.config.ts  tsconfig.json  Dockerfile
@@ -126,5 +126,16 @@ Rutas nuevas: `/pacientes` · `/pacientes/nuevo` · `/pacientes/:id` · `/leads`
 | `frontend/shared` | `lib/dates` (utilidades de Lima), `ui/Dialog` mejorado |
 Rutas nuevas: `/agenda` · `/agenda/hoy` · `/agenda/nueva` · `/agenda/configuracion` · `/mi-agenda`.
 
-## 9. Estado
-Ver `LOGS.md`. Hoy: Fases 0, 1, 2 y 3 completas (backend + frontend).
+## 9. Fase 4 — componentes implementados (backend; frontend en curso)
+| Capa | Módulos |
+|---|---|
+| `domain` | `clinical_rules` (vitales, CIE-10, checklist de firma, hash canónico, adjuntos, consentimientos requeridos), `specialties/{base, registry}` (contrato `SpecialtyModule`, registro vacío hasta la Fase 5), permisos `clinical:read` / `clinical:write` / `consents:capture` |
+| `models` | `clinical` (Allergy, Medication, Condition, Icd10Code, ConsentTemplate, Consent, Encounter, VitalSigns, EncounterDiagnosis, Addendum, SpecialtyPayload, Attachment) |
+| `repositories` | `clinical_records`, `consents`, `encounters`, `attachments`, `file_storage` (disco local con guardia anti path-traversal) |
+| `services` | `clinical_access` (única puerta de acceso clínico + auditoría de denegaciones), `clinical_history`, `consents`, `encounters` (borrador, checklist, firma, adenda, integridad), `attachments` |
+| `api/v1` | `clinical` (resumen, alergias, medicación, antecedentes, `/icd10`), `encounters`, `consents`, `attachments` |
+| `alembic` | `0005_clinical_core` (tablas + 10 triggers de inmutabilidad + plantillas y CIE-10 de ejemplo) |
+| `scripts` | `seed_clinical.py` (consentimiento general, alergias, medicación), `dev/mutation_check.py` |
+
+## 10. Estado
+Ver `LOGS.md`. Hoy: Fases 0, 1, 2 y 3 completas; Fase 4 con backend completo y frontend en curso.

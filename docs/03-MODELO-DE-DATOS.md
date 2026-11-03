@@ -168,3 +168,14 @@ Tablas nuevas: `patients`, `clinical_histories`, `care_team` (índice único par
 | Cancelación | estado | `cancel_reason` obligatorio (máx. 200) | Trazabilidad y métricas |
 
 Todas las horas se guardan en UTC y se interpretan en `America/Lima`. Un bloque de trabajo es **hora local**; una cita debe caber **entera dentro de un único bloque** (no puede cruzar el almuerzo ni la medianoche).
+
+## 7. Implementado en Fase 4 (núcleo clínico): desviaciones del diseño original
+Migración `0005_clinical_core`. Tablas: `allergies`, `medications`, `conditions`, `icd10_codes`, `consent_templates`, `consents`, `encounters`, `vital_signs`, `encounter_diagnoses`, `addenda`, `specialty_payloads`, `attachments`.
+- **Una sola fila de signos vitales por medición** (`context`: `SINGLE`, `PRE`, `DURING`, `POST`): sueroterapia registra la serie PRE/DURANTE/POST; el resto una medición. El **IMC lo calcula siempre el servidor** (el cliente no lo envía).
+- **Diagnósticos**: CIE-10 normalizado (`M545` → `M54.5`), único por encuentro, exactamente un principal. El catálogo `icd10_codes` cargado es una **muestra de 112 códigos de ejemplo**; un código válido que no esté se acepta si el doctor escribe la descripción. Cargar el catálogo oficial completo queda pendiente **[VERIFICAR] fuente y licencia**.
+- **Encuentro**: `DRAFT → SIGNED → AMENDED`. Al firmar se congela `content_hash` (SHA-256 del JSON canónico de SOAP + vitales + diagnósticos + payload), el nombre y colegiatura del firmante y `signed_at`. Un índice único parcial impide dos encuentros para la misma cita.
+- **Adendas** (`addenda`): solo se añaden a encuentros firmados; no alteran el contenido firmado ni el hash.
+- **Payload de especialidad** (`specialty_payloads`, JSONB + `schema_version`): la tabla y el contrato `SpecialtyModule` existen, pero el registro está **vacío hasta la Fase 5** (sin módulo, `PUT specialty-payload` devuelve 422).
+- **Consentimientos**: texto versionado (`consent_templates`, 7 tipos, todos marcados "EJEMPLO — NO CONSTITUYE UN TEXTO LEGAL VALIDADO"). Cada `consents` guarda la versión exacta firmada; solo se pueden modificar las columnas de revocación.
+- **Adjuntos**: metadatos en BD (sha256, tamaño, mime, nombre solo para mostrar) y bytes en `storage_dir` con nombre aleatorio. **Pendiente de producción**: almacenamiento cifrado/objeto (S3 compatible) y antivirus.
+- **Triggers de BD** (defensa en profundidad, la API no es la única barrera): `encounters_guard`, `encounter_children_guard` (vitales, diagnósticos y payload solo con el padre en borrador), `addenda_guard` (solo insertar en firmados, append-only), `consents_guard`, `no_mutation_guard` en adjuntos y `no_delete_guard` en alergias, medicación y antecedentes.

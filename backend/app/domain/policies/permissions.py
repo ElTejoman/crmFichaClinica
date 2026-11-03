@@ -23,6 +23,11 @@ class Permission(StrEnum):
     AGENDA_MANAGE = "agenda:manage"  # agendar, confirmar, check-in, cancelar, reprogramar
     AGENDA_ATTEND = "agenda:attend"  # iniciar y completar la atención de SUS citas
     SCHEDULE_MANAGE = "schedule:manage"  # horarios, excepciones, salas y tipos de cita
+    CLINICAL_READ = "clinical:read"  # contenido clínico (doctor: solo con relación terapéutica)
+    CLINICAL_WRITE = "clinical:write"  # escribir/firmar (solo doctores, en SUS especialidades)
+    CONSENTS_CAPTURE = (
+        "consents:capture"  # capturar/consultar consentimientos (sin contenido clínico)
+    )
 
 
 _ADMIN_PERMISSIONS = frozenset(
@@ -46,6 +51,8 @@ ROLE_PERMISSIONS: dict[Role, frozenset[Permission]] = {
         Permission.AGENDA_READ,
         Permission.AGENDA_MANAGE,
         Permission.SCHEDULE_MANAGE,
+        Permission.CLINICAL_READ,
+        Permission.CONSENTS_CAPTURE,
     },
     Role.DOCTOR: frozenset(
         {
@@ -53,6 +60,9 @@ ROLE_PERMISSIONS: dict[Role, frozenset[Permission]] = {
             Permission.LEADS_READ,
             Permission.AGENDA_READ,
             Permission.AGENDA_ATTEND,
+            Permission.CLINICAL_READ,
+            Permission.CLINICAL_WRITE,
+            Permission.CONSENTS_CAPTURE,
         }
     ),
     Role.RECEPTION: frozenset(
@@ -64,6 +74,9 @@ ROLE_PERMISSIONS: dict[Role, frozenset[Permission]] = {
             Permission.AGENDA_READ,
             Permission.AGENDA_MANAGE,
             Permission.SCHEDULE_MANAGE,
+            # Recepción captura la firma del consentimiento en la admisión, pero NUNCA lee
+            # contenido clínico (docs/04): por eso no recibe CLINICAL_READ.
+            Permission.CONSENTS_CAPTURE,
         }
     ),
     Role.PATIENT: frozenset(),

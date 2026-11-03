@@ -11,10 +11,39 @@
 | 1 · Identidad y seguridad | ✅ |
 | 2 · Pacientes + CRM | ✅ |
 | 3 · Agenda | ✅ |
-| 4 · Núcleo clínico | ⬜ |
+| 4 · Núcleo clínico | 🟨 backend ✅ · frontend ⬜ |
 | 5a Nutrición · 5b Acupuntura · 5c Quiropraxia · 5d Sueroterapia · 5e Odontología | ⬜ |
 | 6 · Tablero dueño + portal paciente | ⬜ |
 | 7 · Hardening y entrega | ⬜ |
+
+---
+
+## 2026-11-03 · Fase 4 — Núcleo clínico 🟨 (backend ✅ · frontend en curso)
+**Hecho (backend)** — detalle en `docs/03 §7`, `docs/04 §7`, `docs/05`, `docs/06 §11`, `docs/07 §5`.
+- Historia clínica: resumen (alertas primero), alergias, medicación y antecedentes (sin borrado físico), búsqueda CIE-10 sin tildes y tolerante a erratas (catálogo de **112 códigos de ejemplo**).
+- Encuentros: borrador → **checklist de firma** (única fuente de verdad) → firma (hash SHA-256 canónico, firmante y colegiatura congelados, completa la cita) → **adendas** (estado `AMENDED`, el contenido firmado no cambia) → verificación de integridad. Línea de tiempo que oculta borradores ajenos.
+- Consentimientos versionados (7 tipos, **textos de ejemplo no legales**), verbal solo para atención general y fotos, menores con apoderado, revocación que bloquea nuevas firmas.
+- Adjuntos: lista blanca, verificación de bytes reales, 10 MB, nombre aleatorio en disco, descarga como `attachment` + `nosniff`, fotos con consentimiento.
+- Contrato `SpecialtyModule` + registro (vacío hasta la Fase 5) probado con un módulo falso.
+- Inmutabilidad también en **PostgreSQL** (10 triggers; migración `0005` con ciclo upgrade → check → downgrade → upgrade verificado). Seed clínico idempotente (`seed_clinical.py`).
+
+**Verificación (evidencia, ejecutada por el agente principal)**
+- ruff ✅ · mypy --strict ✅ (121 archivos) · alembic check ✅ · **pytest 608 passed, 1 skipped** (PostgreSQL 16 real, ~3 min). 212 tests nuevos de la fase (unitarios de reglas + 4 archivos de integración).
+- **Mutaciones (10, `scripts/dev/mutation_check.py`)**: checklist vacío, firmado editable, hash siempre válido, lectura sin relación, escritura sin relación, firma sin auditar, firma de consentimiento sin relación, verbal para todo, sin verificar bytes reales, trigger de encuentros desactivado → **las 10 hacen fallar un test**.
+- Seed ejecutado dos veces: 10 registros la primera, 0 la segunda.
+
+**Bugs encontrados por las pruebas y corregidos**
+- **Seguridad**: `GET /consents/{id}/signature` no exigía relación terapéutica (cualquier doctor veía la firma de cualquier paciente).
+- Descarga de un adjunto cuya fila existe pero el archivo no: devolvía 500 → ahora 404 `attachment_file_missing` + log con el id.
+- `AlreadyRevokedError` respondía 422; debía ser 409 (conflicto).
+- Búsqueda CIE-10: `m545` no encontraba `M54.5` y "lumbalgia" no encontraba el lumbago del catálogo → comparación sin punto y descripción con el término de uso en Perú.
+- Mis tests usaban valores de enum inexistentes (`CHRONIC`, `LAB_RESULT`) → lección en CLAUDE.md. Un heredoc sin comillas corrompió CLAUDE.md y un `ruff format` suelto alteró `docs/02` → restaurados; lección registrada.
+
+**NO verificado / pendiente**
+- **Frontend de la Fase 4 aún no existe** (esta entrada se completa al terminarlo).
+- Catálogo CIE-10 oficial completo y su licencia **[VERIFICAR]**. Textos de consentimiento: ejemplos, requieren revisión legal. Firma digital con valor legal **[VERIFICAR]** (el hash es una huella de integridad, no una firma legal). Retención de 20 años **[VERIFICAR]**.
+- Adjuntos sin cifrado en reposo ni antivirus (solo disco local de desarrollo). `docker compose` sin validar (sin daemon).
+- Todavía sin *break-glass*, permiso del paciente para información sensible, portal del paciente ni exportación PDF.
 
 ---
 

@@ -8,6 +8,7 @@ import asyncio
 import sys
 
 from seed_agenda import seed_agenda  # mismo directorio: scripts/
+from seed_clinical import seed_clinical
 
 from app.core.config import get_settings
 from app.core.database import build_engine, build_session_factory
@@ -96,9 +97,11 @@ async def seed() -> None:
             created += 1
         await session.commit()
         agenda_created = await seed_agenda(session)
+        clinical_created = await seed_clinical(session)
     await engine.dispose()
     print(
-        f"Seed listo: {created} usuarios y {agenda_created} registros de agenda nuevos. "
+        f"Seed listo: {created} usuarios, {agenda_created} registros de agenda y "
+        f"{clinical_created} registros clínicos nuevos. "
         f"Contraseña demo: {DEMO_PASSWORD}"
     )
 

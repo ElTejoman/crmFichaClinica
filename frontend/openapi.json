@@ -2800,10 +2800,1612 @@
           }
         }
       }
+    },
+    "/patients/{patient_id}/clinical-summary": {
+      "get": {
+        "tags": [
+          "clínico"
+        ],
+        "summary": "Clinical Summary",
+        "operationId": "clinical_summary_patients__patient_id__clinical_summary_get",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicalSummary"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patients/{patient_id}/allergies": {
+      "get": {
+        "tags": [
+          "clínico"
+        ],
+        "summary": "List Allergies",
+        "operationId": "list_allergies_patients__patient_id__allergies_get",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          },
+          {
+            "name": "include_inactive",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Inactive"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AllergyRead"
+                  },
+                  "title": "Response List Allergies Patients  Patient Id  Allergies Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "clínico"
+        ],
+        "summary": "Add Allergy",
+        "operationId": "add_allergy_patients__patient_id__allergies_post",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AllergyCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllergyRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/allergies/{allergy_id}": {
+      "patch": {
+        "tags": [
+          "clínico"
+        ],
+        "summary": "Update Allergy",
+        "operationId": "update_allergy_allergies__allergy_id__patch",
+        "parameters": [
+          {
+            "name": "allergy_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Allergy Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AllergyUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllergyRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patients/{patient_id}/medications": {
+      "get": {
+        "tags": [
+          "clínico"
+        ],
+        "summary": "List Medications",
+        "operationId": "list_medications_patients__patient_id__medications_get",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          },
+          {
+            "name": "include_inactive",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Inactive"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicationRead"
+                  },
+                  "title": "Response List Medications Patients  Patient Id  Medications Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "clínico"
+        ],
+        "summary": "Add Medication",
+        "operationId": "add_medication_patients__patient_id__medications_post",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicationCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedicationRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/medications/{medication_id}": {
+      "patch": {
+        "tags": [
+          "clínico"
+        ],
+        "summary": "Update Medication",
+        "operationId": "update_medication_medications__medication_id__patch",
+        "parameters": [
+          {
+            "name": "medication_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Medication Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicationUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedicationRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patients/{patient_id}/conditions": {
+      "get": {
+        "tags": [
+          "clínico"
+        ],
+        "summary": "List Conditions",
+        "operationId": "list_conditions_patients__patient_id__conditions_get",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          },
+          {
+            "name": "include_inactive",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Inactive"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConditionRead"
+                  },
+                  "title": "Response List Conditions Patients  Patient Id  Conditions Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "clínico"
+        ],
+        "summary": "Add Condition",
+        "operationId": "add_condition_patients__patient_id__conditions_post",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConditionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConditionRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/conditions/{condition_id}": {
+      "patch": {
+        "tags": [
+          "clínico"
+        ],
+        "summary": "Update Condition",
+        "operationId": "update_condition_conditions__condition_id__patch",
+        "parameters": [
+          {
+            "name": "condition_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Condition Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConditionUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConditionRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/icd10": {
+      "get": {
+        "tags": [
+          "clínico"
+        ],
+        "summary": "Search Icd10",
+        "operationId": "search_icd10_icd10_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100,
+              "description": "Código o texto",
+              "default": "",
+              "title": "Q"
+            },
+            "description": "Código o texto"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "default": 15,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Icd10Read"
+                  },
+                  "title": "Response Search Icd10 Icd10 Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/encounters": {
+      "post": {
+        "tags": [
+          "encuentros"
+        ],
+        "summary": "Create Encounter",
+        "operationId": "create_encounter_encounters_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EncounterCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncounterRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patients/{patient_id}/encounters": {
+      "get": {
+        "tags": [
+          "encuentros"
+        ],
+        "summary": "List Encounters",
+        "operationId": "list_encounters_patients__patient_id__encounters_get",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EncounterSummary"
+                  },
+                  "title": "Response List Encounters Patients  Patient Id  Encounters Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/encounters/{encounter_id}": {
+      "get": {
+        "tags": [
+          "encuentros"
+        ],
+        "summary": "Get Encounter",
+        "operationId": "get_encounter_encounters__encounter_id__get",
+        "parameters": [
+          {
+            "name": "encounter_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Encounter Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncounterRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "encuentros"
+        ],
+        "summary": "Update Encounter",
+        "operationId": "update_encounter_encounters__encounter_id__patch",
+        "parameters": [
+          {
+            "name": "encounter_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Encounter Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EncounterUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncounterRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/encounters/{encounter_id}/specialty-payload": {
+      "put": {
+        "tags": [
+          "encuentros"
+        ],
+        "summary": "Put Specialty Payload",
+        "operationId": "put_specialty_payload_encounters__encounter_id__specialty_payload_put",
+        "parameters": [
+          {
+            "name": "encounter_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Encounter Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayloadWrite"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncounterRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/encounters/{encounter_id}/signing-checklist": {
+      "get": {
+        "tags": [
+          "encuentros"
+        ],
+        "summary": "Signing Checklist",
+        "operationId": "signing_checklist_encounters__encounter_id__signing_checklist_get",
+        "parameters": [
+          {
+            "name": "encounter_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Encounter Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SigningChecklist"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/encounters/{encounter_id}/sign": {
+      "post": {
+        "tags": [
+          "encuentros"
+        ],
+        "summary": "Sign Encounter",
+        "operationId": "sign_encounter_encounters__encounter_id__sign_post",
+        "parameters": [
+          {
+            "name": "encounter_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Encounter Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncounterRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/encounters/{encounter_id}/addenda": {
+      "post": {
+        "tags": [
+          "encuentros"
+        ],
+        "summary": "Add Addendum",
+        "operationId": "add_addendum_encounters__encounter_id__addenda_post",
+        "parameters": [
+          {
+            "name": "encounter_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Encounter Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddendumCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncounterRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/encounters/{encounter_id}/integrity": {
+      "get": {
+        "tags": [
+          "encuentros"
+        ],
+        "summary": "Verify Integrity",
+        "operationId": "verify_integrity_encounters__encounter_id__integrity_get",
+        "parameters": [
+          {
+            "name": "encounter_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Encounter Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrityResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/consent-templates": {
+      "get": {
+        "tags": [
+          "consentimientos"
+        ],
+        "summary": "List Templates",
+        "operationId": "list_templates_consent_templates_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ConsentTemplateRead"
+                  },
+                  "type": "array",
+                  "title": "Response List Templates Consent Templates Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patients/{patient_id}/consents": {
+      "get": {
+        "tags": [
+          "consentimientos"
+        ],
+        "summary": "List Consents",
+        "operationId": "list_consents_patients__patient_id__consents_get",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConsentRead"
+                  },
+                  "title": "Response List Consents Patients  Patient Id  Consents Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "consentimientos"
+        ],
+        "summary": "Capture Consent",
+        "operationId": "capture_consent_patients__patient_id__consents_post",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/consents/{consent_id}/revoke": {
+      "post": {
+        "tags": [
+          "consentimientos"
+        ],
+        "summary": "Revoke Consent",
+        "operationId": "revoke_consent_consents__consent_id__revoke_post",
+        "parameters": [
+          {
+            "name": "consent_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Consent Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevokeBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/consents/{consent_id}/signature": {
+      "get": {
+        "tags": [
+          "consentimientos"
+        ],
+        "summary": "Consent Signature",
+        "description": "La imagen de la firma solo la ve quien tiene acceso clínico (recepción no).",
+        "operationId": "consent_signature_consents__consent_id__signature_get",
+        "parameters": [
+          {
+            "name": "consent_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Consent Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignatureImage"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patients/{patient_id}/attachments": {
+      "post": {
+        "tags": [
+          "adjuntos"
+        ],
+        "summary": "Upload Attachment",
+        "operationId": "upload_attachment_patients__patient_id__attachments_post",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_attachment_patients__patient_id__attachments_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttachmentRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "adjuntos"
+        ],
+        "summary": "List Attachments",
+        "operationId": "list_attachments_patients__patient_id__attachments_get",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AttachmentRead"
+                  },
+                  "title": "Response List Attachments Patients  Patient Id  Attachments Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/attachments/{attachment_id}/download": {
+      "get": {
+        "tags": [
+          "adjuntos"
+        ],
+        "summary": "Download Attachment",
+        "operationId": "download_attachment_attachments__attachment_id__download_get",
+        "parameters": [
+          {
+            "name": "attachment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Attachment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AddendumCreate": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Reason"
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 5000,
+            "minLength": 1,
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason",
+          "text"
+        ],
+        "title": "AddendumCreate"
+      },
+      "AddendumRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "author_name": {
+            "type": "string",
+            "title": "Author Name"
+          },
+          "author_license": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author License"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "reason",
+          "text",
+          "author_name",
+          "author_license",
+          "created_at"
+        ],
+        "title": "AddendumRead"
+      },
+      "AllergyCreate": {
+        "properties": {
+          "substance": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 1,
+            "title": "Substance"
+          },
+          "reaction": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reaction"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/AllergySeverity"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "substance",
+          "severity"
+        ],
+        "title": "AllergyCreate"
+      },
+      "AllergyRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "substance": {
+            "type": "string",
+            "title": "Substance"
+          },
+          "reaction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reaction"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/AllergySeverity"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RecordStatus"
+          },
+          "verified_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "substance",
+          "reaction",
+          "severity",
+          "status",
+          "verified_at"
+        ],
+        "title": "AllergyRead"
+      },
+      "AllergySeverity": {
+        "type": "string",
+        "enum": [
+          "MILD",
+          "MODERATE",
+          "SEVERE"
+        ],
+        "title": "AllergySeverity"
+      },
+      "AllergyUpdate": {
+        "properties": {
+          "reaction": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reaction"
+          },
+          "severity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AllergySeverity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified"
+          }
+        },
+        "type": "object",
+        "title": "AllergyUpdate"
+      },
       "AppointmentCreate": {
         "properties": {
           "patient_id": {
@@ -3176,6 +4778,86 @@
         "type": "object",
         "title": "AppointmentTypeUpdate"
       },
+      "AttachmentKind": {
+        "type": "string",
+        "enum": [
+          "LAB",
+          "IMAGING",
+          "PHOTO",
+          "REPORT",
+          "CONSENT_SCAN",
+          "OTHER"
+        ],
+        "title": "AttachmentKind"
+      },
+      "AttachmentRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "patient_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Patient Id"
+          },
+          "encounter_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Encounter Id"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/AttachmentKind"
+          },
+          "original_name": {
+            "type": "string",
+            "title": "Original Name"
+          },
+          "mime": {
+            "type": "string",
+            "title": "Mime"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "title": "Size Bytes"
+          },
+          "sha256": {
+            "type": "string",
+            "title": "Sha256"
+          },
+          "has_patient_consent": {
+            "type": "boolean",
+            "title": "Has Patient Consent"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "patient_id",
+          "encounter_id",
+          "kind",
+          "original_name",
+          "mime",
+          "size_bytes",
+          "sha256",
+          "has_patient_consent",
+          "created_at"
+        ],
+        "title": "AttachmentRead"
+      },
       "AuditLogRead": {
         "properties": {
           "id": {
@@ -3299,6 +4981,41 @@
         ],
         "title": "AvailabilitySlot"
       },
+      "Body_upload_attachment_patients__patient_id__attachments_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/AttachmentKind"
+          },
+          "has_patient_consent": {
+            "type": "boolean",
+            "title": "Has Patient Consent",
+            "default": false
+          },
+          "encounter_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Encounter Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file",
+          "kind"
+        ],
+        "title": "Body_upload_attachment_patients__patient_id__attachments_post"
+      },
       "CancelBody": {
         "properties": {
           "reason": {
@@ -3407,6 +5124,491 @@
           "first_broken_id"
         ],
         "title": "ChainVerification"
+      },
+      "ClinicalSummary": {
+        "properties": {
+          "allergies": {
+            "items": {
+              "$ref": "#/components/schemas/AllergyRead"
+            },
+            "type": "array",
+            "title": "Allergies"
+          },
+          "medications": {
+            "items": {
+              "$ref": "#/components/schemas/MedicationRead"
+            },
+            "type": "array",
+            "title": "Medications"
+          },
+          "conditions": {
+            "items": {
+              "$ref": "#/components/schemas/ConditionRead"
+            },
+            "type": "array",
+            "title": "Conditions"
+          },
+          "last_vitals": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VitalSignsRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "last_encounter_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Encounter At"
+          },
+          "signed_encounters": {
+            "type": "integer",
+            "title": "Signed Encounters"
+          },
+          "consents": {
+            "$ref": "#/components/schemas/ConsentStatus"
+          }
+        },
+        "type": "object",
+        "required": [
+          "allergies",
+          "medications",
+          "conditions",
+          "last_vitals",
+          "last_encounter_at",
+          "signed_encounters",
+          "consents"
+        ],
+        "title": "ClinicalSummary",
+        "description": "Lo que el doctor ve siempre al abrir la ficha (alertas primero)."
+      },
+      "ConditionCreate": {
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/ConditionKind"
+          },
+          "icd10_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 10
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icd10 Code"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 1,
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "description"
+        ],
+        "title": "ConditionCreate"
+      },
+      "ConditionKind": {
+        "type": "string",
+        "enum": [
+          "PERSONAL",
+          "FAMILY",
+          "SURGICAL",
+          "HABIT"
+        ],
+        "title": "ConditionKind"
+      },
+      "ConditionRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ConditionKind"
+          },
+          "icd10_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icd10 Code"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "icd10_code",
+          "description",
+          "active"
+        ],
+        "title": "ConditionRead"
+      },
+      "ConditionUpdate": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 150,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active"
+          }
+        },
+        "type": "object",
+        "title": "ConditionUpdate"
+      },
+      "ConsentCreate": {
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/ConsentType"
+          },
+          "method": {
+            "$ref": "#/components/schemas/ConsentMethod"
+          },
+          "signed_by_name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 1,
+            "title": "Signed By Name"
+          },
+          "signer_relation": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signer Relation"
+          },
+          "signature_image": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 400000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signature Image"
+          },
+          "witness_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 150
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Witness Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "method",
+          "signed_by_name"
+        ],
+        "title": "ConsentCreate"
+      },
+      "ConsentMethod": {
+        "type": "string",
+        "enum": [
+          "ON_SCREEN",
+          "PAPER_SCANNED",
+          "VERBAL_RECORDED"
+        ],
+        "title": "ConsentMethod"
+      },
+      "ConsentRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ConsentType"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "text_version": {
+            "type": "integer",
+            "title": "Text Version"
+          },
+          "method": {
+            "$ref": "#/components/schemas/ConsentMethod"
+          },
+          "signed_by_name": {
+            "type": "string",
+            "title": "Signed By Name"
+          },
+          "signer_relation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signer Relation"
+          },
+          "witness_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Witness Name"
+          },
+          "signed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Signed At"
+          },
+          "revoked_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
+          },
+          "revoked_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked Reason"
+          },
+          "is_valid": {
+            "type": "boolean",
+            "title": "Is Valid",
+            "readOnly": true
+          },
+          "has_signature_image": {
+            "type": "boolean",
+            "title": "Has Signature Image",
+            "readOnly": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "title",
+          "text_version",
+          "method",
+          "signed_by_name",
+          "signer_relation",
+          "witness_name",
+          "signed_at",
+          "revoked_at",
+          "revoked_reason",
+          "is_valid",
+          "has_signature_image"
+        ],
+        "title": "ConsentRead",
+        "description": "No incluye la imagen de la firma (se pide aparte, solo con acceso clínico)."
+      },
+      "ConsentStatus": {
+        "properties": {
+          "general_care": {
+            "type": "boolean",
+            "title": "General Care"
+          },
+          "data_processing": {
+            "type": "boolean",
+            "title": "Data Processing"
+          }
+        },
+        "type": "object",
+        "required": [
+          "general_care",
+          "data_processing"
+        ],
+        "title": "ConsentStatus"
+      },
+      "ConsentTemplateRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ConsentType"
+          },
+          "version": {
+            "type": "integer",
+            "title": "Version"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "body": {
+            "type": "string",
+            "title": "Body"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "version",
+          "title",
+          "body"
+        ],
+        "title": "ConsentTemplateRead"
+      },
+      "ConsentType": {
+        "type": "string",
+        "enum": [
+          "DATA_PROCESSING",
+          "GENERAL_CARE",
+          "ACUPUNCTURE_INVASIVE",
+          "CHIROPRACTIC_MANIPULATION",
+          "IV_THERAPY",
+          "DENTAL_PROCEDURE",
+          "PHOTO_USE"
+        ],
+        "title": "ConsentType"
+      },
+      "DiagnosisIn": {
+        "properties": {
+          "icd10_code": {
+            "type": "string",
+            "maxLength": 10,
+            "minLength": 3,
+            "title": "Icd10 Code"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 300
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "type": {
+            "$ref": "#/components/schemas/DiagnosisType",
+            "default": "DEFINITIVE"
+          },
+          "is_primary": {
+            "type": "boolean",
+            "title": "Is Primary",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "icd10_code"
+        ],
+        "title": "DiagnosisIn"
+      },
+      "DiagnosisRead": {
+        "properties": {
+          "icd10_code": {
+            "type": "string",
+            "title": "Icd10 Code"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "type": {
+            "$ref": "#/components/schemas/DiagnosisType"
+          },
+          "is_primary": {
+            "type": "boolean",
+            "title": "Is Primary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "icd10_code",
+          "description",
+          "type",
+          "is_primary"
+        ],
+        "title": "DiagnosisRead"
+      },
+      "DiagnosisType": {
+        "type": "string",
+        "enum": [
+          "PRESUMPTIVE",
+          "DEFINITIVE"
+        ],
+        "title": "DiagnosisType"
       },
       "DoctorAvailability": {
         "properties": {
@@ -3632,6 +5834,475 @@
         ],
         "title": "EmergencyContact"
       },
+      "EncounterCreate": {
+        "properties": {
+          "appointment_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Appointment Id"
+          },
+          "patient_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Patient Id"
+          },
+          "specialty": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Specialty"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "EncounterCreate",
+        "description": "Desde una cita (`appointment_id`) o directo (`patient_id` + `specialty`)."
+      },
+      "EncounterRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "patient_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Patient Id"
+          },
+          "appointment_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Appointment Id"
+          },
+          "doctor_user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Doctor User Id"
+          },
+          "doctor_name": {
+            "type": "string",
+            "title": "Doctor Name"
+          },
+          "specialty": {
+            "$ref": "#/components/schemas/Specialty"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EncounterStatus"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Occurred At"
+          },
+          "subjective": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subjective"
+          },
+          "objective_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Objective Notes"
+          },
+          "assessment_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assessment Notes"
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan"
+          },
+          "followup_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Followup At"
+          },
+          "history_reviewed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "History Reviewed At"
+          },
+          "vitals_not_applicable_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vitals Not Applicable Reason"
+          },
+          "vitals": {
+            "items": {
+              "$ref": "#/components/schemas/VitalSignsRead"
+            },
+            "type": "array",
+            "title": "Vitals"
+          },
+          "diagnoses": {
+            "items": {
+              "$ref": "#/components/schemas/DiagnosisRead"
+            },
+            "type": "array",
+            "title": "Diagnoses"
+          },
+          "addenda": {
+            "items": {
+              "$ref": "#/components/schemas/AddendumRead"
+            },
+            "type": "array",
+            "title": "Addenda"
+          },
+          "payload": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PayloadRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "signed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signed At"
+          },
+          "signer_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signer Name"
+          },
+          "signer_license": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signer License"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "patient_id",
+          "appointment_id",
+          "doctor_user_id",
+          "doctor_name",
+          "specialty",
+          "status",
+          "occurred_at",
+          "subjective",
+          "objective_notes",
+          "assessment_notes",
+          "plan",
+          "followup_at",
+          "history_reviewed_at",
+          "vitals_not_applicable_reason",
+          "vitals",
+          "diagnoses",
+          "addenda",
+          "payload",
+          "signed_at",
+          "signer_name",
+          "signer_license",
+          "created_at"
+        ],
+        "title": "EncounterRead"
+      },
+      "EncounterStatus": {
+        "type": "string",
+        "enum": [
+          "DRAFT",
+          "SIGNED",
+          "AMENDED"
+        ],
+        "title": "EncounterStatus",
+        "description": "Ciclo de vida de un encuentro clínico. Firmado = inmutable (solo adendas)."
+      },
+      "EncounterSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "specialty": {
+            "$ref": "#/components/schemas/Specialty"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EncounterStatus"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Occurred At"
+          },
+          "doctor_name": {
+            "type": "string",
+            "title": "Doctor Name"
+          },
+          "signed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signed At"
+          },
+          "primary_diagnosis_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Diagnosis Code"
+          },
+          "primary_diagnosis_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Diagnosis Text"
+          },
+          "addenda_count": {
+            "type": "integer",
+            "title": "Addenda Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "specialty",
+          "status",
+          "occurred_at",
+          "doctor_name",
+          "signed_at",
+          "primary_diagnosis_code",
+          "primary_diagnosis_text",
+          "addenda_count"
+        ],
+        "title": "EncounterSummary",
+        "description": "Fila de la línea de tiempo."
+      },
+      "EncounterUpdate": {
+        "properties": {
+          "subjective": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 10000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subjective"
+          },
+          "objective_notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 10000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Objective Notes"
+          },
+          "assessment_notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 10000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assessment Notes"
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 10000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan"
+          },
+          "followup_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Followup At"
+          },
+          "vitals_not_applicable_reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vitals Not Applicable Reason"
+          },
+          "history_reviewed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "History Reviewed"
+          },
+          "vitals": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/VitalSignsIn"
+                },
+                "type": "array",
+                "maxItems": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vitals"
+          },
+          "diagnoses": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DiagnosisIn"
+                },
+                "type": "array",
+                "maxItems": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diagnoses"
+          }
+        },
+        "type": "object",
+        "title": "EncounterUpdate",
+        "description": "Parcial: solo se aplican los campos enviados (también `null` para vaciar)."
+      },
       "ExceptionCreate": {
         "properties": {
           "doctor_user_id": {
@@ -3838,6 +6509,55 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "Icd10Read": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "description"
+        ],
+        "title": "Icd10Read"
+      },
+      "IntegrityResult": {
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "title": "Valid"
+          },
+          "signed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signed At"
+          },
+          "algorithm": {
+            "type": "string",
+            "title": "Algorithm",
+            "default": "SHA-256"
+          }
+        },
+        "type": "object",
+        "required": [
+          "valid",
+          "signed_at"
+        ],
+        "title": "IntegrityResult"
       },
       "LeadActivityCreate": {
         "properties": {
@@ -4637,6 +7357,272 @@
         ],
         "title": "MaritalStatus"
       },
+      "MedicationCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "dose": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dose"
+          },
+          "route": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Route"
+          },
+          "frequency": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frequency"
+          },
+          "since": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Since"
+          },
+          "until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Until"
+          },
+          "prescriber": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 150
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prescriber"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "MedicationCreate"
+      },
+      "MedicationRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "dose": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dose"
+          },
+          "route": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Route"
+          },
+          "frequency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frequency"
+          },
+          "since": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Since"
+          },
+          "until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Until"
+          },
+          "prescriber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prescriber"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RecordStatus"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "dose",
+          "route",
+          "frequency",
+          "since",
+          "until",
+          "prescriber",
+          "status"
+        ],
+        "title": "MedicationRead"
+      },
+      "MedicationUpdate": {
+        "properties": {
+          "dose": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dose"
+          },
+          "route": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Route"
+          },
+          "frequency": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frequency"
+          },
+          "until": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Until"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "MedicationUpdate"
+      },
+      "MissingItemRead": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "MissingItemRead"
+      },
       "PatientCreate": {
         "properties": {
           "document_type": {
@@ -5273,6 +8259,43 @@
         "title": "PatientUpdate",
         "description": "Actualización parcial. Los campos enviados (incluso `null`) se aplican; los ausentes no.\n\nEl documento de identidad NO es editable aquí: corregirlo es una operación excepcional."
       },
+      "PayloadRead": {
+        "properties": {
+          "specialty": {
+            "$ref": "#/components/schemas/Specialty"
+          },
+          "schema_version": {
+            "type": "integer",
+            "title": "Schema Version"
+          },
+          "data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "specialty",
+          "schema_version",
+          "data"
+        ],
+        "title": "PayloadRead"
+      },
+      "PayloadWrite": {
+        "properties": {
+          "data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "PayloadWrite"
+      },
       "ProfessionalBody": {
         "type": "string",
         "enum": [
@@ -5306,6 +8329,14 @@
         ],
         "title": "ReadinessResponse",
         "description": "El servicio puede atender tráfico (BD disponible)."
+      },
+      "RecordStatus": {
+        "type": "string",
+        "enum": [
+          "ACTIVE",
+          "INACTIVE"
+        ],
+        "title": "RecordStatus"
       },
       "RescheduleBody": {
         "properties": {
@@ -5359,6 +8390,21 @@
         ],
         "title": "RescheduleBody",
         "description": "Mueve la cita. Se aplican los campos enviados (`room_id: null` quita la sala)."
+      },
+      "RevokeBody": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "title": "RevokeBody"
       },
       "Role": {
         "type": "string",
@@ -5598,6 +8644,40 @@
           "OTHER"
         ],
         "title": "Sex"
+      },
+      "SignatureImage": {
+        "properties": {
+          "image": {
+            "type": "string",
+            "title": "Image"
+          }
+        },
+        "type": "object",
+        "required": [
+          "image"
+        ],
+        "title": "SignatureImage"
+      },
+      "SigningChecklist": {
+        "properties": {
+          "can_sign": {
+            "type": "boolean",
+            "title": "Can Sign"
+          },
+          "missing": {
+            "items": {
+              "$ref": "#/components/schemas/MissingItemRead"
+            },
+            "type": "array",
+            "title": "Missing"
+          }
+        },
+        "type": "object",
+        "required": [
+          "can_sign",
+          "missing"
+        ],
+        "title": "SigningChecklist"
       },
       "Specialty": {
         "type": "string",
@@ -5854,6 +8934,276 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "VitalContext": {
+        "type": "string",
+        "enum": [
+          "SINGLE",
+          "PRE",
+          "DURING",
+          "POST"
+        ],
+        "title": "VitalContext"
+      },
+      "VitalSignsIn": {
+        "properties": {
+          "context": {
+            "$ref": "#/components/schemas/VitalContext",
+            "default": "SINGLE"
+          },
+          "measured_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Measured At"
+          },
+          "systolic": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Systolic"
+          },
+          "diastolic": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diastolic"
+          },
+          "heart_rate": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heart Rate"
+          },
+          "resp_rate": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resp Rate"
+          },
+          "temperature_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature C"
+          },
+          "spo2": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spo2"
+          },
+          "weight_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight Kg"
+          },
+          "height_cm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Height Cm"
+          },
+          "pain_vas": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pain Vas"
+          }
+        },
+        "type": "object",
+        "title": "VitalSignsIn",
+        "description": "Una medición. Los rangos de plausibilidad los valida el dominio (mensajes claros)."
+      },
+      "VitalSignsRead": {
+        "properties": {
+          "context": {
+            "$ref": "#/components/schemas/VitalContext"
+          },
+          "measured_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Measured At"
+          },
+          "systolic": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Systolic"
+          },
+          "diastolic": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diastolic"
+          },
+          "heart_rate": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heart Rate"
+          },
+          "resp_rate": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resp Rate"
+          },
+          "temperature_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature C"
+          },
+          "spo2": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spo2"
+          },
+          "weight_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight Kg"
+          },
+          "height_cm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Height Cm"
+          },
+          "bmi": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bmi"
+          },
+          "pain_vas": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pain Vas"
+          }
+        },
+        "type": "object",
+        "required": [
+          "context",
+          "measured_at",
+          "systolic",
+          "diastolic",
+          "heart_rate",
+          "resp_rate",
+          "temperature_c",
+          "spo2",
+          "weight_kg",
+          "height_cm",
+          "bmi",
+          "pain_vas"
+        ],
+        "title": "VitalSignsRead"
       },
       "WorkingBlockCreate": {
         "properties": {

@@ -64,11 +64,12 @@ def migrated_database() -> None:
 
 
 @pytest.fixture
-def settings() -> Settings:
+def settings(tmp_path: Path) -> Settings:
     return Settings(
         environment="test",
         database_url=TEST_DATABASE_URL,
         refresh_cookie_path="/",  # el cliente de test llama sin el prefijo /api
+        storage_dir=str(tmp_path / "storage"),  # adjuntos aislados por test
     )
 
 

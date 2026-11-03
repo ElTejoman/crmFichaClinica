@@ -125,3 +125,131 @@ async def agenda(client: AsyncClient, as_role: AsRole, session_factory: SessionF
         room_id=room.json()["id"],
         monday=next_monday(),
     )
+
+
+# ============================================================== escenario clínico
+VALID_VITALS = [
+    {
+        "context": "SINGLE",
+        "systolic": 120,
+        "diastolic": 80,
+        "heart_rate": 72,
+        "weight_kg": 70,
+        "height_cm": 170,
+        "pain_vas": 3,
+    }
+]
+VALID_DIAGNOSES = [{"icd10_code": "M54.5", "type": "DEFINITIVE", "is_primary": True}]
+
+
+@dataclass
+class Clinic:
+    """Doctor de acupuntura CON relación terapéutica con un paciente que ya firmó el
+    consentimiento general. Es el punto de partida de casi todos los tests clínicos."""
+
+    client: AsyncClient
+    session_factory: SessionFactory
+    as_role: AsRole
+    reception: dict[str, str]
+    owner: dict[str, str]
+    doctor: User
+    doctor_headers: dict[str, str]
+    patient: dict[str, Any]
+
+    async def new_doctor(
+        self, email: str, specialties: set[Specialty] | None = None, *, related: bool = False
+    ) -> tuple[User, dict[str, str]]:
+        doctor = await create_user(
+            self.session_factory, email, [Role.DOCTOR], specialties=specialties
+        )
+        headers = await login(self.client, email)
+        if related:
+            await self.relate(doctor)
+        return doctor, headers
+
+    async def relate(self, doctor: User, patient_id: str | None = None) -> None:
+        response = await self.client.post(
+            f"/patients/{patient_id or self.patient['id']}/care-team",
+            json={"doctor_user_id": str(doctor.id)},
+            headers=self.reception,
+        )
+        assert response.status_code == 201, response.text
+
+    async def consent(
+        self, kind: str = "GENERAL_CARE", *, patient_id: str | None = None, **overrides: Any
+    ) -> dict[str, Any]:
+        body: dict[str, Any] = {
+            "type": kind,
+            "method": "PAPER_SCANNED",
+            "signed_by_name": "Paciente de Prueba",
+        }
+        body.update(overrides)
+        response = await self.client.post(
+            f"/patients/{patient_id or self.patient['id']}/consents",
+            json=body,
+            headers=self.reception,
+        )
+        assert response.status_code == 201, response.text
+        return response.json()  # type: ignore[no-any-return]
+
+    async def draft(self, headers: dict[str, str] | None = None, **body: Any) -> dict[str, Any]:
+        payload = {"patient_id": self.patient["id"], "specialty": "ACUPUNCTURE", **body}
+        response = await self.client.post(
+            "/encounters", json=payload, headers=headers or self.doctor_headers
+        )
+        assert response.status_code == 201, response.text
+        return response.json()  # type: ignore[no-any-return]
+
+    async def fill(
+        self, encounter_id: str, headers: dict[str, str] | None = None, **overrides: Any
+    ) -> dict[str, Any]:
+        """Deja el borrador listo para firmar (se puede sobrescribir cualquier campo)."""
+        body: dict[str, Any] = {
+            "subjective": "Dolor lumbar de 2 semanas",
+            "objective_notes": "Contractura paravertebral",
+            "assessment_notes": "Lumbalgia mecánica",
+            "plan": "Reposo relativo y control en 7 días",
+            "history_reviewed": True,
+            "vitals": VALID_VITALS,
+            "diagnoses": VALID_DIAGNOSES,
+        }
+        body.update(overrides)
+        response = await self.client.patch(
+            f"/encounters/{encounter_id}", json=body, headers=headers or self.doctor_headers
+        )
+        assert response.status_code == 200, response.text
+        return response.json()  # type: ignore[no-any-return]
+
+    async def signed(self, **overrides: Any) -> dict[str, Any]:
+        encounter = await self.draft()
+        await self.fill(encounter["id"], **overrides)
+        response = await self.client.post(
+            f"/encounters/{encounter['id']}/sign", headers=self.doctor_headers
+        )
+        assert response.status_code == 200, response.text
+        return response.json()  # type: ignore[no-any-return]
+
+
+@pytest.fixture
+async def clinic(client: AsyncClient, as_role: AsRole, session_factory: SessionFactory) -> Clinic:
+    reception = await as_role(Role.RECEPTION)
+    owner = await as_role(Role.OWNER)
+    doctor = await create_user(
+        session_factory, "doctora@clinica-demo.pe", [Role.DOCTOR], full_name="Dra. Acu"
+    )
+    doctor_headers = await login(client, "doctora@clinica-demo.pe")
+    created = await client.post("/patients", json=patient_payload(), headers=reception)
+    assert created.status_code == 201
+    scenario = Clinic(
+        client=client,
+        session_factory=session_factory,
+        as_role=as_role,
+        reception=reception,
+        owner=owner,
+        doctor=doctor,
+        doctor_headers=doctor_headers,
+        patient=created.json(),
+    )
+    await scenario.relate(doctor)
+    await scenario.consent("GENERAL_CARE")
+    return scenario

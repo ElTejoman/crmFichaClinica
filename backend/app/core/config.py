@@ -46,6 +46,10 @@ class Settings(BaseSettings):
     max_failed_logins: int = 5
     lockout_minutes: int = 15
 
+    # --- Archivos clínicos (adjuntos) -----------------------------------
+    # Directorio FUERA del webroot; en Docker es un volumen. Ver docs/06 §2.
+    storage_dir: str = "storage"
+
     # --- CORS ----------------------------------------------------------
     cors_origins: list[str] = ["http://localhost:5173"]
 

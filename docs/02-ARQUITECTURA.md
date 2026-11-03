@@ -63,12 +63,13 @@ backend/
 ```python
 class SpecialtyModule(Protocol):
     specialty: Specialty
-    version: int
+    schema_version: int
     payload_model: type[BaseModel]          # esquema Pydantic del bloque específico
-    def required_for_signing(self, payload) -> list[str]: ...   # campos faltantes
-    def consents_required(self, payload) -> set[ConsentType]: ...
-    def red_flags(self, payload, patient) -> list[RedFlag]: ...
+    def missing_for_signing(self, payload: BaseModel | None) -> list[MissingItem]: ...
+    def consents_required(self, payload: BaseModel | None) -> set[ConsentType]: ...
+    # Fase 5 podría añadir red_flags(payload, patient) si la validación clínica lo exige.
 ```
+*Implementado en la Fase 4* (`domain/specialties/base.py`); el registro está vacío hasta la Fase 5 y se probó con un módulo falso (validación del payload, requisitos de firma y consentimientos específicos).
 - Un **registro** (`registry.py`) mapea `Specialty → SpecialtyModule`.
 - Agregar una especialidad = 1 archivo en `domain/specialties` + 1 componente en el front. **Open/Closed.**
 

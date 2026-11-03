@@ -118,3 +118,68 @@ class AppointmentStatus(StrEnum):
     COMPLETED = "COMPLETED"
     NO_SHOW = "NO_SHOW"
     CANCELLED = "CANCELLED"
+
+
+class EncounterStatus(StrEnum):
+    """Ciclo de vida de un encuentro clínico. Firmado = inmutable (solo adendas)."""
+
+    DRAFT = "DRAFT"
+    SIGNED = "SIGNED"
+    AMENDED = "AMENDED"  # firmado y con al menos una adenda
+
+
+class ConsentType(StrEnum):
+    DATA_PROCESSING = "DATA_PROCESSING"  # Ley 29733
+    GENERAL_CARE = "GENERAL_CARE"
+    ACUPUNCTURE_INVASIVE = "ACUPUNCTURE_INVASIVE"
+    CHIROPRACTIC_MANIPULATION = "CHIROPRACTIC_MANIPULATION"
+    IV_THERAPY = "IV_THERAPY"
+    DENTAL_PROCEDURE = "DENTAL_PROCEDURE"
+    PHOTO_USE = "PHOTO_USE"
+
+
+class ConsentMethod(StrEnum):
+    ON_SCREEN = "ON_SCREEN"  # firma en pantalla
+    PAPER_SCANNED = "PAPER_SCANNED"  # documento firmado en papel y digitalizado
+    VERBAL_RECORDED = (
+        "VERBAL_RECORDED"  # verbal con constancia (solo procedimientos de bajo riesgo)
+    )
+
+
+class AllergySeverity(StrEnum):
+    MILD = "MILD"
+    MODERATE = "MODERATE"
+    SEVERE = "SEVERE"
+
+
+class RecordStatus(StrEnum):
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
+
+
+class ConditionKind(StrEnum):
+    PERSONAL = "PERSONAL"
+    FAMILY = "FAMILY"
+    SURGICAL = "SURGICAL"
+    HABIT = "HABIT"
+
+
+class VitalContext(StrEnum):
+    SINGLE = "SINGLE"  # medición única de la consulta
+    PRE = "PRE"  # antes (p. ej. de una infusión)
+    DURING = "DURING"
+    POST = "POST"
+
+
+class DiagnosisType(StrEnum):
+    PRESUMPTIVE = "PRESUMPTIVE"
+    DEFINITIVE = "DEFINITIVE"
+
+
+class AttachmentKind(StrEnum):
+    LAB = "LAB"
+    IMAGING = "IMAGING"
+    PHOTO = "PHOTO"
+    REPORT = "REPORT"
+    CONSENT_SCAN = "CONSENT_SCAN"
+    OTHER = "OTHER"

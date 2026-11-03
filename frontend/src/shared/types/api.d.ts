@@ -742,10 +742,464 @@ export interface paths {
         patch: operations["update_type_appointment_types__type_id__patch"];
         trace?: never;
     };
+    "/patients/{patient_id}/clinical-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Clinical Summary */
+        get: operations["clinical_summary_patients__patient_id__clinical_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/patients/{patient_id}/allergies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Allergies */
+        get: operations["list_allergies_patients__patient_id__allergies_get"];
+        put?: never;
+        /** Add Allergy */
+        post: operations["add_allergy_patients__patient_id__allergies_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/allergies/{allergy_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Allergy */
+        patch: operations["update_allergy_allergies__allergy_id__patch"];
+        trace?: never;
+    };
+    "/patients/{patient_id}/medications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Medications */
+        get: operations["list_medications_patients__patient_id__medications_get"];
+        put?: never;
+        /** Add Medication */
+        post: operations["add_medication_patients__patient_id__medications_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/medications/{medication_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Medication */
+        patch: operations["update_medication_medications__medication_id__patch"];
+        trace?: never;
+    };
+    "/patients/{patient_id}/conditions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Conditions */
+        get: operations["list_conditions_patients__patient_id__conditions_get"];
+        put?: never;
+        /** Add Condition */
+        post: operations["add_condition_patients__patient_id__conditions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/conditions/{condition_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Condition */
+        patch: operations["update_condition_conditions__condition_id__patch"];
+        trace?: never;
+    };
+    "/icd10": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search Icd10 */
+        get: operations["search_icd10_icd10_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/encounters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Encounter */
+        post: operations["create_encounter_encounters_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/patients/{patient_id}/encounters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Encounters */
+        get: operations["list_encounters_patients__patient_id__encounters_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/encounters/{encounter_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Encounter */
+        get: operations["get_encounter_encounters__encounter_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Encounter */
+        patch: operations["update_encounter_encounters__encounter_id__patch"];
+        trace?: never;
+    };
+    "/encounters/{encounter_id}/specialty-payload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Put Specialty Payload */
+        put: operations["put_specialty_payload_encounters__encounter_id__specialty_payload_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/encounters/{encounter_id}/signing-checklist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Signing Checklist */
+        get: operations["signing_checklist_encounters__encounter_id__signing_checklist_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/encounters/{encounter_id}/sign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sign Encounter */
+        post: operations["sign_encounter_encounters__encounter_id__sign_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/encounters/{encounter_id}/addenda": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Addendum */
+        post: operations["add_addendum_encounters__encounter_id__addenda_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/encounters/{encounter_id}/integrity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Verify Integrity */
+        get: operations["verify_integrity_encounters__encounter_id__integrity_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/consent-templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Templates */
+        get: operations["list_templates_consent_templates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/patients/{patient_id}/consents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Consents */
+        get: operations["list_consents_patients__patient_id__consents_get"];
+        put?: never;
+        /** Capture Consent */
+        post: operations["capture_consent_patients__patient_id__consents_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/consents/{consent_id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revoke Consent */
+        post: operations["revoke_consent_consents__consent_id__revoke_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/consents/{consent_id}/signature": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Consent Signature
+         * @description La imagen de la firma solo la ve quien tiene acceso clínico (recepción no).
+         */
+        get: operations["consent_signature_consents__consent_id__signature_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/patients/{patient_id}/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Attachments */
+        get: operations["list_attachments_patients__patient_id__attachments_get"];
+        put?: never;
+        /** Upload Attachment */
+        post: operations["upload_attachment_patients__patient_id__attachments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/attachments/{attachment_id}/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download Attachment */
+        get: operations["download_attachment_attachments__attachment_id__download_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AddendumCreate */
+        AddendumCreate: {
+            /** Reason */
+            reason: string;
+            /** Text */
+            text: string;
+        };
+        /** AddendumRead */
+        AddendumRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Reason */
+            reason: string;
+            /** Text */
+            text: string;
+            /** Author Name */
+            author_name: string;
+            /** Author License */
+            author_license: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** AllergyCreate */
+        AllergyCreate: {
+            /** Substance */
+            substance: string;
+            /** Reaction */
+            reaction?: string | null;
+            severity: components["schemas"]["AllergySeverity"];
+            /**
+             * Verified
+             * @default false
+             */
+            verified: boolean;
+        };
+        /** AllergyRead */
+        AllergyRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Substance */
+            substance: string;
+            /** Reaction */
+            reaction: string | null;
+            severity: components["schemas"]["AllergySeverity"];
+            status: components["schemas"]["RecordStatus"];
+            /** Verified At */
+            verified_at: string | null;
+        };
+        /**
+         * AllergySeverity
+         * @enum {string}
+         */
+        AllergySeverity: "MILD" | "MODERATE" | "SEVERE";
+        /** AllergyUpdate */
+        AllergyUpdate: {
+            /** Reaction */
+            reaction?: string | null;
+            severity?: components["schemas"]["AllergySeverity"] | null;
+            status?: components["schemas"]["RecordStatus"] | null;
+            /** Verified */
+            verified?: boolean | null;
+        };
         /** AppointmentCreate */
         AppointmentCreate: {
             /**
@@ -868,6 +1322,42 @@ export interface components {
             /** Is Active */
             is_active?: boolean | null;
         };
+        /**
+         * AttachmentKind
+         * @enum {string}
+         */
+        AttachmentKind: "LAB" | "IMAGING" | "PHOTO" | "REPORT" | "CONSENT_SCAN" | "OTHER";
+        /** AttachmentRead */
+        AttachmentRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Patient Id
+             * Format: uuid
+             */
+            patient_id: string;
+            /** Encounter Id */
+            encounter_id: string | null;
+            kind: components["schemas"]["AttachmentKind"];
+            /** Original Name */
+            original_name: string;
+            /** Mime */
+            mime: string;
+            /** Size Bytes */
+            size_bytes: number;
+            /** Sha256 */
+            sha256: string;
+            /** Has Patient Consent */
+            has_patient_consent: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** AuditLogRead */
         AuditLogRead: {
             /** Id */
@@ -906,6 +1396,19 @@ export interface components {
              * Format: date-time
              */
             ends_at: string;
+        };
+        /** Body_upload_attachment_patients__patient_id__attachments_post */
+        Body_upload_attachment_patients__patient_id__attachments_post: {
+            /** File */
+            file: string;
+            kind: components["schemas"]["AttachmentKind"];
+            /**
+             * Has Patient Consent
+             * @default false
+             */
+            has_patient_consent: boolean;
+            /** Encounter Id */
+            encounter_id?: string | null;
         };
         /** CancelBody */
         CancelBody: {
@@ -953,6 +1456,169 @@ export interface components {
             /** First Broken Id */
             first_broken_id: number | null;
         };
+        /**
+         * ClinicalSummary
+         * @description Lo que el doctor ve siempre al abrir la ficha (alertas primero).
+         */
+        ClinicalSummary: {
+            /** Allergies */
+            allergies: components["schemas"]["AllergyRead"][];
+            /** Medications */
+            medications: components["schemas"]["MedicationRead"][];
+            /** Conditions */
+            conditions: components["schemas"]["ConditionRead"][];
+            last_vitals: components["schemas"]["VitalSignsRead"] | null;
+            /** Last Encounter At */
+            last_encounter_at: string | null;
+            /** Signed Encounters */
+            signed_encounters: number;
+            consents: components["schemas"]["ConsentStatus"];
+        };
+        /** ConditionCreate */
+        ConditionCreate: {
+            kind: components["schemas"]["ConditionKind"];
+            /** Icd10 Code */
+            icd10_code?: string | null;
+            /** Description */
+            description: string;
+        };
+        /**
+         * ConditionKind
+         * @enum {string}
+         */
+        ConditionKind: "PERSONAL" | "FAMILY" | "SURGICAL" | "HABIT";
+        /** ConditionRead */
+        ConditionRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["ConditionKind"];
+            /** Icd10 Code */
+            icd10_code: string | null;
+            /** Description */
+            description: string;
+            /** Active */
+            active: boolean;
+        };
+        /** ConditionUpdate */
+        ConditionUpdate: {
+            /** Description */
+            description?: string | null;
+            /** Active */
+            active?: boolean | null;
+        };
+        /** ConsentCreate */
+        ConsentCreate: {
+            type: components["schemas"]["ConsentType"];
+            method: components["schemas"]["ConsentMethod"];
+            /** Signed By Name */
+            signed_by_name: string;
+            /** Signer Relation */
+            signer_relation?: string | null;
+            /** Signature Image */
+            signature_image?: string | null;
+            /** Witness Name */
+            witness_name?: string | null;
+        };
+        /**
+         * ConsentMethod
+         * @enum {string}
+         */
+        ConsentMethod: "ON_SCREEN" | "PAPER_SCANNED" | "VERBAL_RECORDED";
+        /**
+         * ConsentRead
+         * @description No incluye la imagen de la firma (se pide aparte, solo con acceso clínico).
+         */
+        ConsentRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            type: components["schemas"]["ConsentType"];
+            /** Title */
+            title: string;
+            /** Text Version */
+            text_version: number;
+            method: components["schemas"]["ConsentMethod"];
+            /** Signed By Name */
+            signed_by_name: string;
+            /** Signer Relation */
+            signer_relation: string | null;
+            /** Witness Name */
+            witness_name: string | null;
+            /**
+             * Signed At
+             * Format: date-time
+             */
+            signed_at: string;
+            /** Revoked At */
+            revoked_at: string | null;
+            /** Revoked Reason */
+            revoked_reason: string | null;
+            /** Is Valid */
+            readonly is_valid: boolean;
+            /** Has Signature Image */
+            readonly has_signature_image: boolean;
+        };
+        /** ConsentStatus */
+        ConsentStatus: {
+            /** General Care */
+            general_care: boolean;
+            /** Data Processing */
+            data_processing: boolean;
+        };
+        /** ConsentTemplateRead */
+        ConsentTemplateRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            type: components["schemas"]["ConsentType"];
+            /** Version */
+            version: number;
+            /** Title */
+            title: string;
+            /** Body */
+            body: string;
+        };
+        /**
+         * ConsentType
+         * @enum {string}
+         */
+        ConsentType: "DATA_PROCESSING" | "GENERAL_CARE" | "ACUPUNCTURE_INVASIVE" | "CHIROPRACTIC_MANIPULATION" | "IV_THERAPY" | "DENTAL_PROCEDURE" | "PHOTO_USE";
+        /** DiagnosisIn */
+        DiagnosisIn: {
+            /** Icd10 Code */
+            icd10_code: string;
+            /** Description */
+            description?: string | null;
+            /** @default DEFINITIVE */
+            type: components["schemas"]["DiagnosisType"];
+            /**
+             * Is Primary
+             * @default false
+             */
+            is_primary: boolean;
+        };
+        /** DiagnosisRead */
+        DiagnosisRead: {
+            /** Icd10 Code */
+            icd10_code: string;
+            /** Description */
+            description: string;
+            type: components["schemas"]["DiagnosisType"];
+            /** Is Primary */
+            is_primary: boolean;
+        };
+        /**
+         * DiagnosisType
+         * @enum {string}
+         */
+        DiagnosisType: "PRESUMPTIVE" | "DEFINITIVE";
         /** DoctorAvailability */
         DoctorAvailability: {
             /**
@@ -1041,6 +1707,136 @@ export interface components {
             phone: string;
             /** Relation */
             relation?: string | null;
+        };
+        /**
+         * EncounterCreate
+         * @description Desde una cita (`appointment_id`) o directo (`patient_id` + `specialty`).
+         */
+        EncounterCreate: {
+            /** Appointment Id */
+            appointment_id?: string | null;
+            /** Patient Id */
+            patient_id?: string | null;
+            specialty?: components["schemas"]["Specialty"] | null;
+        };
+        /** EncounterRead */
+        EncounterRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Patient Id
+             * Format: uuid
+             */
+            patient_id: string;
+            /** Appointment Id */
+            appointment_id: string | null;
+            /**
+             * Doctor User Id
+             * Format: uuid
+             */
+            doctor_user_id: string;
+            /** Doctor Name */
+            doctor_name: string;
+            specialty: components["schemas"]["Specialty"];
+            status: components["schemas"]["EncounterStatus"];
+            /**
+             * Occurred At
+             * Format: date-time
+             */
+            occurred_at: string;
+            /** Subjective */
+            subjective: string | null;
+            /** Objective Notes */
+            objective_notes: string | null;
+            /** Assessment Notes */
+            assessment_notes: string | null;
+            /** Plan */
+            plan: string | null;
+            /** Followup At */
+            followup_at: string | null;
+            /** History Reviewed At */
+            history_reviewed_at: string | null;
+            /** Vitals Not Applicable Reason */
+            vitals_not_applicable_reason: string | null;
+            /** Vitals */
+            vitals: components["schemas"]["VitalSignsRead"][];
+            /** Diagnoses */
+            diagnoses: components["schemas"]["DiagnosisRead"][];
+            /** Addenda */
+            addenda: components["schemas"]["AddendumRead"][];
+            payload: components["schemas"]["PayloadRead"] | null;
+            /** Signed At */
+            signed_at: string | null;
+            /** Signer Name */
+            signer_name: string | null;
+            /** Signer License */
+            signer_license: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
+         * EncounterStatus
+         * @description Ciclo de vida de un encuentro clínico. Firmado = inmutable (solo adendas).
+         * @enum {string}
+         */
+        EncounterStatus: "DRAFT" | "SIGNED" | "AMENDED";
+        /**
+         * EncounterSummary
+         * @description Fila de la línea de tiempo.
+         */
+        EncounterSummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            specialty: components["schemas"]["Specialty"];
+            status: components["schemas"]["EncounterStatus"];
+            /**
+             * Occurred At
+             * Format: date-time
+             */
+            occurred_at: string;
+            /** Doctor Name */
+            doctor_name: string;
+            /** Signed At */
+            signed_at: string | null;
+            /** Primary Diagnosis Code */
+            primary_diagnosis_code: string | null;
+            /** Primary Diagnosis Text */
+            primary_diagnosis_text: string | null;
+            /** Addenda Count */
+            addenda_count: number;
+        };
+        /**
+         * EncounterUpdate
+         * @description Parcial: solo se aplican los campos enviados (también `null` para vaciar).
+         */
+        EncounterUpdate: {
+            /** Subjective */
+            subjective?: string | null;
+            /** Objective Notes */
+            objective_notes?: string | null;
+            /** Assessment Notes */
+            assessment_notes?: string | null;
+            /** Plan */
+            plan?: string | null;
+            /** Followup At */
+            followup_at?: string | null;
+            /** Vitals Not Applicable Reason */
+            vitals_not_applicable_reason?: string | null;
+            /** History Reviewed */
+            history_reviewed?: boolean | null;
+            /** Vitals */
+            vitals?: components["schemas"]["VitalSignsIn"][] | null;
+            /** Diagnoses */
+            diagnoses?: components["schemas"]["DiagnosisIn"][] | null;
         };
         /** ExceptionCreate */
         ExceptionCreate: {
@@ -1131,6 +1927,25 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** Icd10Read */
+        Icd10Read: {
+            /** Code */
+            code: string;
+            /** Description */
+            description: string;
+        };
+        /** IntegrityResult */
+        IntegrityResult: {
+            /** Valid */
+            valid: boolean;
+            /** Signed At */
+            signed_at: string | null;
+            /**
+             * Algorithm
+             * @default SHA-256
+             */
+            algorithm: string;
         };
         /** LeadActivityCreate */
         LeadActivityCreate: {
@@ -1387,6 +2202,65 @@ export interface components {
          * @enum {string}
          */
         MaritalStatus: "SINGLE" | "MARRIED" | "COHABITING" | "DIVORCED" | "WIDOWED";
+        /** MedicationCreate */
+        MedicationCreate: {
+            /** Name */
+            name: string;
+            /** Dose */
+            dose?: string | null;
+            /** Route */
+            route?: string | null;
+            /** Frequency */
+            frequency?: string | null;
+            /** Since */
+            since?: string | null;
+            /** Until */
+            until?: string | null;
+            /** Prescriber */
+            prescriber?: string | null;
+        };
+        /** MedicationRead */
+        MedicationRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Dose */
+            dose: string | null;
+            /** Route */
+            route: string | null;
+            /** Frequency */
+            frequency: string | null;
+            /** Since */
+            since: string | null;
+            /** Until */
+            until: string | null;
+            /** Prescriber */
+            prescriber: string | null;
+            status: components["schemas"]["RecordStatus"];
+        };
+        /** MedicationUpdate */
+        MedicationUpdate: {
+            /** Dose */
+            dose?: string | null;
+            /** Route */
+            route?: string | null;
+            /** Frequency */
+            frequency?: string | null;
+            /** Until */
+            until?: string | null;
+            status?: components["schemas"]["RecordStatus"] | null;
+        };
+        /** MissingItemRead */
+        MissingItemRead: {
+            /** Code */
+            code: string;
+            /** Message */
+            message: string;
+        };
         /** PatientCreate */
         PatientCreate: {
             document_type: components["schemas"]["DocumentType"];
@@ -1544,6 +2418,23 @@ export interface components {
             /** Is Active */
             is_active?: boolean | null;
         };
+        /** PayloadRead */
+        PayloadRead: {
+            specialty: components["schemas"]["Specialty"];
+            /** Schema Version */
+            schema_version: number;
+            /** Data */
+            data: {
+                [key: string]: unknown;
+            };
+        };
+        /** PayloadWrite */
+        PayloadWrite: {
+            /** Data */
+            data: {
+                [key: string]: unknown;
+            };
+        };
         /**
          * ProfessionalBody
          * @description Colegio/registro que respalda al profesional **[VERIFICAR]** por especialidad (docs/01).
@@ -1564,6 +2455,11 @@ export interface components {
             database: boolean;
         };
         /**
+         * RecordStatus
+         * @enum {string}
+         */
+        RecordStatus: "ACTIVE" | "INACTIVE";
+        /**
          * RescheduleBody
          * @description Mueve la cita. Se aplican los campos enviados (`room_id: null` quita la sala).
          */
@@ -1579,6 +2475,11 @@ export interface components {
             doctor_user_id?: string | null;
             /** Room Id */
             room_id?: string | null;
+        };
+        /** RevokeBody */
+        RevokeBody: {
+            /** Reason */
+            reason: string;
         };
         /**
          * Role
@@ -1671,6 +2572,18 @@ export interface components {
          * @enum {string}
          */
         Sex: "FEMALE" | "MALE" | "OTHER";
+        /** SignatureImage */
+        SignatureImage: {
+            /** Image */
+            image: string;
+        };
+        /** SigningChecklist */
+        SigningChecklist: {
+            /** Can Sign */
+            can_sign: boolean;
+            /** Missing */
+            missing: components["schemas"]["MissingItemRead"][];
+        };
         /**
          * Specialty
          * @description Especialidades de la clínica.
@@ -1760,6 +2673,68 @@ export interface components {
             input?: unknown;
             /** Context */
             ctx?: Record<string, never>;
+        };
+        /**
+         * VitalContext
+         * @enum {string}
+         */
+        VitalContext: "SINGLE" | "PRE" | "DURING" | "POST";
+        /**
+         * VitalSignsIn
+         * @description Una medición. Los rangos de plausibilidad los valida el dominio (mensajes claros).
+         */
+        VitalSignsIn: {
+            /** @default SINGLE */
+            context: components["schemas"]["VitalContext"];
+            /** Measured At */
+            measured_at?: string | null;
+            /** Systolic */
+            systolic?: number | null;
+            /** Diastolic */
+            diastolic?: number | null;
+            /** Heart Rate */
+            heart_rate?: number | null;
+            /** Resp Rate */
+            resp_rate?: number | null;
+            /** Temperature C */
+            temperature_c?: number | null;
+            /** Spo2 */
+            spo2?: number | null;
+            /** Weight Kg */
+            weight_kg?: number | null;
+            /** Height Cm */
+            height_cm?: number | null;
+            /** Pain Vas */
+            pain_vas?: number | null;
+        };
+        /** VitalSignsRead */
+        VitalSignsRead: {
+            context: components["schemas"]["VitalContext"];
+            /**
+             * Measured At
+             * Format: date-time
+             */
+            measured_at: string;
+            /** Systolic */
+            systolic: number | null;
+            /** Diastolic */
+            diastolic: number | null;
+            /** Heart Rate */
+            heart_rate: number | null;
+            /** Resp Rate */
+            resp_rate: number | null;
+            /** Temperature C */
+            temperature_c: number | null;
+            /** Spo2 */
+            spo2: number | null;
+            /** Weight Kg */
+            weight_kg: number | null;
+            /** Height Cm */
+            height_cm: number | null;
+            /** Bmi */
+            bmi: number | null;
+            /** Pain Vas */
+            pain_vas: number | null;
         };
         /** WorkingBlockCreate */
         WorkingBlockCreate: {
@@ -3515,6 +4490,924 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AppointmentTypeRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    clinical_summary_patients__patient_id__clinical_summary_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClinicalSummary"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_allergies_patients__patient_id__allergies_get: {
+        parameters: {
+            query?: {
+                include_inactive?: boolean;
+            };
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AllergyRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_allergy_patients__patient_id__allergies_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AllergyCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AllergyRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_allergy_allergies__allergy_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                allergy_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AllergyUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AllergyRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_medications_patients__patient_id__medications_get: {
+        parameters: {
+            query?: {
+                include_inactive?: boolean;
+            };
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_medication_patients__patient_id__medications_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MedicationCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_medication_medications__medication_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                medication_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MedicationUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MedicationRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_conditions_patients__patient_id__conditions_get: {
+        parameters: {
+            query?: {
+                include_inactive?: boolean;
+            };
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConditionRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_condition_patients__patient_id__conditions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConditionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConditionRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_condition_conditions__condition_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                condition_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConditionUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConditionRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    search_icd10_icd10_get: {
+        parameters: {
+            query?: {
+                /** @description Código o texto */
+                q?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Icd10Read"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_encounter_encounters_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EncounterCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EncounterRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_encounters_patients__patient_id__encounters_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EncounterSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_encounter_encounters__encounter_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounter_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EncounterRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_encounter_encounters__encounter_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounter_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EncounterUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EncounterRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_specialty_payload_encounters__encounter_id__specialty_payload_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounter_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PayloadWrite"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EncounterRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    signing_checklist_encounters__encounter_id__signing_checklist_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounter_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SigningChecklist"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    sign_encounter_encounters__encounter_id__sign_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounter_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EncounterRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_addendum_encounters__encounter_id__addenda_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounter_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddendumCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EncounterRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_integrity_encounters__encounter_id__integrity_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                encounter_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntegrityResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_templates_consent_templates_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsentTemplateRead"][];
+                };
+            };
+        };
+    };
+    list_consents_patients__patient_id__consents_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsentRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    capture_consent_patients__patient_id__consents_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConsentCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsentRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_consent_consents__consent_id__revoke_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                consent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RevokeBody"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConsentRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    consent_signature_consents__consent_id__signature_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                consent_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SignatureImage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_attachments_patients__patient_id__attachments_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttachmentRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_attachment_patients__patient_id__attachments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_attachment_patients__patient_id__attachments_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttachmentRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    download_attachment_attachments__attachment_id__download_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                attachment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */

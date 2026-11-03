@@ -60,3 +60,25 @@ def test_only_superuser_can_assign_privileged_roles() -> None:
 
 def test_owner_can_assign_non_privileged_roles() -> None:
     assert can_assign_roles([Role.OWNER], [Role.DOCTOR, Role.RECEPTION, Role.PATIENT])
+
+
+def test_clinical_content_is_never_granted_to_reception_superuser_or_patient() -> None:
+    for role in (Role.RECEPTION, Role.SUPERUSER, Role.PATIENT):
+        assert not can([role], Permission.CLINICAL_READ)
+        assert not can([role], Permission.CLINICAL_WRITE)
+
+
+def test_only_doctors_write_clinical_content_and_owner_reads_it() -> None:
+    assert can([Role.DOCTOR], Permission.CLINICAL_WRITE) and can(
+        [Role.DOCTOR], Permission.CLINICAL_READ
+    )
+    assert can([Role.OWNER], Permission.CLINICAL_READ)
+    assert not can(
+        [Role.OWNER], Permission.CLINICAL_WRITE
+    )  # el dueño escribe solo si TAMBIÉN es doctor
+    assert can([Role.OWNER, Role.DOCTOR], Permission.CLINICAL_WRITE)
+
+
+def test_reception_captures_consents_but_cannot_read_clinical_data() -> None:
+    assert can([Role.RECEPTION], Permission.CONSENTS_CAPTURE)
+    assert not can([Role.SUPERUSER], Permission.CONSENTS_CAPTURE)

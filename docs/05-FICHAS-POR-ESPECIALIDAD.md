@@ -39,3 +39,7 @@ Todas comparten el **núcleo** (SOAP, vitales, diagnósticos CIE-10, consentimie
 
 ## Plantillas versionadas
 Cada módulo lleva `schema_version`. Cambiar campos ⇒ nueva versión del esquema + migración de payloads antiguos (los antiguos siguen mostrándose con su versión original; **nunca** se reescribe historia firmada).
+
+## Implementado en Fase 4: núcleo común
+La ficha común ya funciona sin módulo de especialidad: SOAP (motivo, examen, evaluación, plan, control), signos vitales (con IMC calculado), diagnósticos CIE-10, revisión de antecedentes, consentimiento general y adjuntos.
+**Para firmar** (lista única de verdad en `domain/clinical_rules.signing_checklist`, la misma que muestra la pantalla): motivo de consulta, ≥ 1 diagnóstico, plan, signos vitales (o motivo de "no aplica"), antecedentes revisados y consentimiento general vigente. Cada módulo de la Fase 5 añadirá sus propios requisitos y consentimientos específicos vía `SpecialtyModule.missing_for_signing` / `consents_required`.

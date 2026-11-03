@@ -19,8 +19,13 @@ from app.domain.policies.permissions import Permission, can
 from app.models.user import User
 from app.repositories.agenda_catalog import AppointmentTypeRepository, RoomRepository
 from app.repositories.appointments import AppointmentRepository
+from app.repositories.attachments import AttachmentRepository
 from app.repositories.audit import AuditRepository
 from app.repositories.care_team import CareTeamRepository
+from app.repositories.clinical_records import ClinicalRecordRepository
+from app.repositories.consents import ConsentRepository
+from app.repositories.encounters import EncounterRepository
+from app.repositories.file_storage import LocalFileStorage
 from app.repositories.health import HealthRepository
 from app.repositories.leads import LeadRepository
 from app.repositories.patients import PatientRepository
@@ -29,8 +34,13 @@ from app.repositories.schedules import ScheduleRepository
 from app.repositories.unit_of_work import UnitOfWork
 from app.repositories.users import UserRepository
 from app.services.appointments import AppointmentService
+from app.services.attachments import AttachmentService
 from app.services.audit import AuditService, RequestContext
 from app.services.auth import AuthService
+from app.services.clinical_access import ClinicalAccess
+from app.services.clinical_history import ClinicalHistoryService
+from app.services.consents import ConsentService
+from app.services.encounters import EncounterService
 from app.services.health import HealthService
 from app.services.leads import LeadService
 from app.services.patients import PatientService
@@ -162,6 +172,69 @@ def get_schedule_service(
     )
 
 
+def get_clinical_access(
+    session: DbSession, audit: Annotated[AuditService, Depends(get_audit_service)]
+) -> ClinicalAccess:
+    return ClinicalAccess(
+        patients=PatientRepository(session),
+        care_team=CareTeamRepository(session),
+        audit=audit,
+        uow=UnitOfWork(session),
+    )
+
+
+ClinicalAccessDep = Annotated[ClinicalAccess, Depends(get_clinical_access)]
+
+
+def get_clinical_history_service(
+    session: DbSession, access: ClinicalAccessDep
+) -> ClinicalHistoryService:
+    return ClinicalHistoryService(
+        records=ClinicalRecordRepository(session),
+        encounters=EncounterRepository(session),
+        consents=ConsentRepository(session),
+        access=access,
+        uow=UnitOfWork(session),
+    )
+
+
+def get_encounter_service(session: DbSession, access: ClinicalAccessDep) -> EncounterService:
+    return EncounterService(
+        encounters=EncounterRepository(session),
+        appointments=AppointmentRepository(session),
+        consents=ConsentRepository(session),
+        records=ClinicalRecordRepository(session),
+        access=access,
+        uow=UnitOfWork(session),
+    )
+
+
+def get_consent_service(
+    session: DbSession,
+    audit: Annotated[AuditService, Depends(get_audit_service)],
+    access: ClinicalAccessDep,
+) -> ConsentService:
+    return ConsentService(
+        consents=ConsentRepository(session),
+        patients=PatientRepository(session),
+        audit=audit,
+        access=access,
+        uow=UnitOfWork(session),
+    )
+
+
+def get_attachment_service(
+    session: DbSession, access: ClinicalAccessDep, settings: SettingsDep
+) -> AttachmentService:
+    return AttachmentService(
+        attachments=AttachmentRepository(session),
+        encounters=EncounterRepository(session),
+        storage=LocalFileStorage(settings.storage_dir),
+        access=access,
+        uow=UnitOfWork(session),
+    )
+
+
 HealthServiceDep = Annotated[HealthService, Depends(get_health_service)]
 AuditServiceDep = Annotated[AuditService, Depends(get_audit_service)]
 AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
@@ -170,6 +243,10 @@ PatientServiceDep = Annotated[PatientService, Depends(get_patient_service)]
 LeadServiceDep = Annotated[LeadService, Depends(get_lead_service)]
 AppointmentServiceDep = Annotated[AppointmentService, Depends(get_appointment_service)]
 ScheduleServiceDep = Annotated[ScheduleService, Depends(get_schedule_service)]
+ClinicalHistoryServiceDep = Annotated[ClinicalHistoryService, Depends(get_clinical_history_service)]
+EncounterServiceDep = Annotated[EncounterService, Depends(get_encounter_service)]
+ConsentServiceDep = Annotated[ConsentService, Depends(get_consent_service)]
+AttachmentServiceDep = Annotated[AttachmentService, Depends(get_attachment_service)]
 
 
 # ------------------------------------------------------ autenticación / permisos
@@ -236,3 +313,6 @@ AgendaReader = Annotated[User, Depends(require_permission(Permission.AGENDA_READ
 AgendaManager = Annotated[User, Depends(require_permission(Permission.AGENDA_MANAGE))]
 AgendaAttend = Annotated[User, Depends(require_permission(Permission.AGENDA_ATTEND))]
 ScheduleManager = Annotated[User, Depends(require_permission(Permission.SCHEDULE_MANAGE))]
+ClinicalReader = Annotated[User, Depends(require_permission(Permission.CLINICAL_READ))]
+ClinicalWriter = Annotated[User, Depends(require_permission(Permission.CLINICAL_WRITE))]
+ConsentsCapturer = Annotated[User, Depends(require_permission(Permission.CONSENTS_CAPTURE))]

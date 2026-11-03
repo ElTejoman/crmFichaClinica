@@ -45,6 +45,13 @@ CRM + ficha clínica para **una clínica en Lima, Perú** con 5 especialidades: 
 - **`ruff --fix` borra imports "sin usar"** aunque aún no los hayas usado (me pasó con `Any`): añade el import junto con su primer uso.
 - **Aserciones vacías**: nunca `assert (...) or True` ni `... and False`; un test que no puede fallar es peor que no tenerlo. Verificar los controles críticos con una mutación.
 - **Búsqueda en español**: siempre sin tildes (`f_unaccent`) y tolerante a erratas (`<%` word_similarity); escapar `% _ \` del usuario en LIKE.
+- **Permiso genérico ≠ acceso al paciente**: `clinical:read` solo dice que el ROL puede leer clínica. Todo endpoint que devuelva algo de UN paciente (incluida la imagen de la firma de un consentimiento) debe pasar por `ClinicalAccess` (relación terapéutica). Me pasó con `/consents/{id}/signature`: lo cazó un test, no la revisión.
+- **Leer los enums reales antes de escribir tests**: usé `CHRONIC` y `LAB_RESULT`, que no existen, y ~30 tests fallaron por 422 de validación en vez de probar lo suyo. Hacer `grep` en `domain/enums.py` primero.
+- **Fila sin archivo = error controlado**: si un adjunto existe en BD y no en disco, 404 con código propio + log con el id (nunca 500).
+- **Harness de mutaciones**: `python scripts/dev/mutation_check.py` (10 controles clínicos). Añadir ahí cada control crítico nuevo.
+- **Parcheo y `ruff format`**: el `assert` del script de parcheo volvió a abortar porque ruff había reformateado la línea; leer la línea actual (`grep -n`) antes de fijar el ancla.
+- **Heredocs**: un `<<EOF` sin comillas ejecuta los `` `backticks` `` del texto (me corrompió CLAUDE.md y lanzó un `ruff format` suelto). Para texto con backticks usar `<<'EOF'` o escribir el script a un archivo.
+- **Nunca `ruff format` desde la raíz del repo**: formatea también los bloques de código de los `.md` (alteró `docs/02`). Ejecutarlo siempre dentro de `backend/`.
 
 ## Honestidad normativa
 Lo marcado **[VERIFICAR]** en `docs/01-INVESTIGACION-FICHA-CLINICA.md` NO está confirmado (NTS 139, retención 20 años, firma digital, NTS odontograma, bandera roja de quiropraxia). No presentarlo como hecho. Los textos de consentimiento son **ejemplos no legales**.
