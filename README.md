@@ -7,7 +7,7 @@ Aplicación web para gestionar pacientes, agenda, CRM de posibles clientes y **f
 - **Despliegue**: Docker Compose
 
 > **Estado**: fases 0–4 completas (identidad y seguridad, pacientes + CRM, agenda, núcleo clínico: historia, encuentros SOAP con firma, adendas, consentimientos y adjuntos). **Aún no existen los módulos por especialidad** (fase 5). Detalle y pendientes en `LOGS.md`.
-> Convenciones y memoria del proyecto: `CLAUDE.md`. Plan: `docs/00-PLAN-MAESTRO.md`.
+> Convenciones, memoria y **pendientes abiertos** del proyecto: `CLAUDE.md` (lo primero que debe leer un asistente de IA en el IDE). Plan: `docs/00-PLAN-MAESTRO.md`.
 
 ⚠️ Los aspectos normativos marcados **[VERIFICAR]** y los textos de consentimiento de ejemplo **no constituyen asesoría legal**. Los datos de demo son ficticios. No usar con datos reales de pacientes sin completar el checklist de `docs/06-SEGURIDAD-Y-CUMPLIMIENTO.md §7`.
 

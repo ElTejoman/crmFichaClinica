@@ -61,6 +61,8 @@
 - **Corregido (sin validar con Docker)**: en producción los adjuntos no se podían guardar (`storage` relativo en `/srv`, propiedad de root, sin volumen) → `STORAGE_DIR=/data/storage` con volumen `attachments_data` y propietario `appuser`.
 - **Abierto**: las dependencias del backend no están fijadas (`>=` sin lockfile); el frontend sí (`package-lock.json`). Posible incoherencia: el consentimiento de datos marcado al crear un paciente (fase 2) no genera una fila en `consents`, y el resumen clínico avisa "falta el consentimiento de tratamiento de datos personales".
 
+**Pendientes consolidados** en `CLAUDE.md` → "Estado y pendientes abiertos" (P1–P8): es el archivo que el IDE carga solo.
+
 **Siguiente paso**: Fase 5 — módulos de especialidad (empezar por nutrición o acupuntura) con el contrato `SpecialtyModule`; antes, validar el núcleo con un doctor real.
 
 ---

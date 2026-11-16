@@ -12,9 +12,23 @@ CRM + ficha clínica para **una clínica en Lima, Perú** con 5 especialidades: 
 - Una sola sede. Zona horaria `America/Lima`, BD en UTC.
 - Stack: React+Vite+TS strict / FastAPI + SQLAlchemy 2 async + Alembic + PostgreSQL 16 / Docker Compose.
 - Trabajo en la nube: **no hay daemon Docker**; se prueba con Postgres 16 nativo + uvicorn + vite. Dockerfiles/compose están validados solo con `docker compose config` (sintaxis); el usuario valida con `docker compose up --build`.
+- **En el IDE del usuario (con Docker Desktop)** sí se puede levantar todo: ver `README.md` (arranque, usuarios demo, tests). El primer trabajo ahí es cerrar el pendiente P1 de abajo.
 - TypeScript fijado a **5.9.x** (openapi-typescript 7 exige TS 5; TS 7 del scaffold rompía el árbol de dependencias). `strict` y `noUncheckedIndexedAccess` activos.
 - `npm audit`: 3 avisos moderados solo en `openapi-typescript` (herramienta de desarrollo, no se despliega; 0 en producción). No forzar downgrade.
 - Rama de desarrollo: `claude/intelligent-bardeen-6xu34r`. **No crear PR** salvo que lo pida.
+
+## Estado y pendientes abiertos (actualizado 2026-11-16)
+**Hecho**: fases 0–4 (identidad, pacientes + CRM, agenda, núcleo clínico). Backend 608 tests, frontend 438, rama `claude/intelligent-bardeen-6xu34r` subida. **Siguiente fase: 5 (módulos por especialidad)** sobre el contrato `domain/specialties/base.py` (registro hoy vacío). Detalle y evidencia: `LOGS.md` (entrada más reciente arriba).
+
+**Pendientes abiertos, por prioridad** (marcar aquí al cerrarlos y anotarlo en `LOGS.md`):
+- **P1 · Validar Docker de verdad**: `docker compose up --build` (dev) + `docker compose exec api python scripts/seed.py`, y el compose de producción (`-f docker-compose.prod.yml`). Nunca se ha levantado en un daemon. En especial: que los adjuntos se guarden en el volumen `attachments_data` (`STORAGE_DIR=/data/storage`, propietario `appuser`; cambio hecho sin poder probarlo).
+- **P2 · Consentimiento de datos del paciente**: el campo `data_processing_consent` que se marca al crear un paciente (fase 2) NO crea una fila `consents` de tipo `DATA_PROCESSING`, y el resumen clínico muestra "Falta el consentimiento de tratamiento de datos personales" (`ClinicalSummary.consents.data_processing`). Decidir: crear la fila al dar de alta (preferible, con la versión de plantilla) o dejar de mostrar el aviso. Añadir test.
+- **P3 · Fijar dependencias del backend** (`pyproject.toml` usa `>=` y no hay lockfile; el frontend sí tiene `package-lock.json`). Generar un lock (p. ej. `pip-compile`/`uv lock`) y usarlo en Dockerfile y CI.
+- **P4 · Semántica de PATCH de encuentros** (importante para la fase 5): `PATCH /encounters/{id}` **reemplaza** las listas completas de `vitals` y `diagnoses` y re-estampa `measured_at`/`history_reviewed_at` cada vez que se envía; el front manda solo claves cambiadas. Respetarlo en los módulos de especialidad.
+- **P5 · Frontend sin verificar en navegador real**: "Iniciar atención" desde Mi agenda (solo tests), impresión real de un encuentro (solo `@media print` emulado), lectores de pantalla, tablet/móvil 360 px. En la semana de la agenda, citas solapadas quedan angostas y el texto se trunca.
+- **P6 · Normativo [VERIFICAR] (no presentar como hecho)**: catálogo CIE-10 oficial completo y su licencia (hoy 112 códigos de ejemplo), firma digital con valor legal (hoy solo hash SHA-256 de integridad), retención de 20 años, textos de consentimiento (son ejemplos), NTS odontograma, bandera roja de quiropraxia.
+- **P7 · Antes de datos reales (fase 7)**: adjuntos cifrados en reposo y antivirus, backups, 2FA, límites de tasa, *break-glass*, permiso del paciente para información sensible (RENHICE), portal del paciente (fase 6), exportación PDF de la HC, borrado/rectificación ARCO.
+- **P8 · Observaciones menores**: `AppointmentRead` sin historial de estados; el 409 de solapamiento devuelve un solo `details.resource`; lost_reason de leads es texto libre (convendría catálogo).
 
 ## Reglas de código (clean code)
 1. Capas backend: `api → services → repositories → models`, `domain` puro. **Prohibido**: `api` importando `models`/SQL; `domain` importando fastapi/sqlalchemy. Hay test de arquitectura.
