@@ -51,10 +51,15 @@
 - Frontend: "Iniciar atención" desde Mi agenda solo probado con tests (no en navegador); impresión real y lectores de pantalla no probados; Docker/nginx sin probar. No hay módulos de especialidad (Fase 5).
 - El PATCH de encuentros **reemplaza** la lista completa de vitales/diagnósticos y `history_reviewed=true` re-estampa la hora cada vez que se envía (el frontend manda solo claves cambiadas): tenerlo presente en la Fase 5.
 - La BD de desarrollo contiene datos E2E no borrables por diseño (2 pacientes "E2E" con encuentros firmados, alergias duplicadas y consentimientos).
-- **Push a GitHub bloqueado (403)**: 12 commits locales sin subir.
+- Push a GitHub resuelto: la rama `claude/intelligent-bardeen-6xu34r` está subida (sin PR).
 - Catálogo CIE-10 oficial completo y su licencia **[VERIFICAR]**. Textos de consentimiento: ejemplos, requieren revisión legal. Firma digital con valor legal **[VERIFICAR]** (el hash es una huella de integridad, no una firma legal). Retención de 20 años **[VERIFICAR]**.
 - Adjuntos sin cifrado en reposo ni antivirus (solo disco local de desarrollo). `docker compose` sin validar (sin daemon).
 - Todavía sin *break-glass*, permiso del paciente para información sensible, portal del paciente ni exportación PDF.
+
+**Verificación de clon limpio (2026-11-16)**: clon de la rama desde GitHub en carpeta nueva → venv + `pip install -e ".[dev]"`, BD vacía, `alembic upgrade head` + `alembic check` + seed (8 usuarios, 85 de agenda, 10 clínicos), ruff/format/mypy ✅, **pytest 608 passed**, API arranca y el login de demo responde; `npm ci` + lint + tsc + prettier + **vitest 438 passed** + build ✅. `docker compose config` válido (sin daemon: no se levantó).
+- **Corregido**: README sin instrucciones de arranque (reescrito: Docker, sin Docker, usuarios demo, tests y aviso de que los tests hacen `DROP SCHEMA public` en la BD de pruebas).
+- **Corregido (sin validar con Docker)**: en producción los adjuntos no se podían guardar (`storage` relativo en `/srv`, propiedad de root, sin volumen) → `STORAGE_DIR=/data/storage` con volumen `attachments_data` y propietario `appuser`.
+- **Abierto**: las dependencias del backend no están fijadas (`>=` sin lockfile); el frontend sí (`package-lock.json`). Posible incoherencia: el consentimiento de datos marcado al crear un paciente (fase 2) no genera una fila en `consents`, y el resumen clínico avisa "falta el consentimiento de tratamiento de datos personales".
 
 **Siguiente paso**: Fase 5 — módulos de especialidad (empezar por nutrición o acupuntura) con el contrato `SpecialtyModule`; antes, validar el núcleo con un doctor real.
 

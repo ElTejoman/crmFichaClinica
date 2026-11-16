@@ -19,7 +19,10 @@ FROM base AS prod
 COPY pyproject.toml alembic.ini ./
 COPY app ./app
 COPY alembic ./alembic
-RUN pip install . && useradd --system --uid 10001 appuser
+# /data/storage: adjuntos clínicos. Debe pertenecer a appuser y montarse como volumen (ver
+# docker-compose.prod.yml); si no, las subidas fallan por permisos y se pierden al recrear.
+RUN pip install . && useradd --system --uid 10001 appuser \
+    && mkdir -p /data/storage && chown appuser /data/storage
 USER appuser
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=3s \

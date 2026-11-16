@@ -8,8 +8,11 @@ services:
       target: prod
     environment:
       ENVIRONMENT: production
+      STORAGE_DIR: /data/storage
     ports: !reset []
-    volumes: !reset []
+    # Sin el bind-mount del código (dev); solo el volumen de adjuntos clínicos.
+    volumes: !override
+      - attachments_data:/data/storage
     restart: unless-stopped
   web:
     build:
@@ -19,3 +22,6 @@ services:
       - "80:80"
     volumes: !reset []
     restart: unless-stopped
+
+volumes:
+  attachments_data:
